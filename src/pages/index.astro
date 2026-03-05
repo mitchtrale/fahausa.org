@@ -1,17 +1,551 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <!-- ── HERO ─────────────────────────────────────────────────────── -->
+  <section id="hero" class="section-white">
+    <div class="section-inner fade-in">
+      <h1>Finnish American Home Association</h1>
+      <img src="/assets/images/image01.jpg" alt="FAHA" class="hero-img" />
+      <h3>A Place for Finns and Friends</h3>
+      <p>
+        FAHA is a participatory organization. We promote a sense of community,
+        common heritage and a caring environment for all ages. We provide housing
+        and care for the elderly. We foster Finnish cultural and educational
+        activities that bridge the generations.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── GAZEBO PARALLAX ───────────────────────────────────────────── -->
+  <section id="gazebo" class="section-bg">
+    <div class="overlay"></div>
+    <div class="gazebo-inner fade-in">
+      <h2>Community,<br />Culture,<br />and Care</h2>
+    </div>
+  </section>
+
+  <!-- ── COMMUNITY CENTER + WHAT IS FAHA? ─────────────────────────── -->
+  <section id="community" class="section-white">
+    <div class="section-inner fade-in">
+      <div class="two-col">
+        <div>
+          <h2>Community Center</h2>
+          <p>
+            FAHA is membership-based and volunteer-powered. Our Board of Directors
+            are elected each year at our Annual General Meeting, and new single and
+            family memberships are approved at monthly Board Meetings.
+          </p>
+          <p>
+            Learn more about FAHA membership, volunteering opportunities, and
+            cultural programs that would welcome your support.
+          </p>
+          <div>
+            <a href="#membership" class="btn btn-dark">Membership</a>
+          </div>
+        </div>
+        <div>
+          <h2>What is FAHA?</h2>
+          <p>
+            Founded in 1984 by industrious Bay Area Finns, FAHA was handbuilt as
+            a cultural hub and retirement home for the community.
+          </p>
+          <p>
+            Today, FAHA is a non-profit which owns and operates
+            <a href="https://www.fahamanor.org/" target="_blank" rel="noopener">FAHA Manor</a>,
+            providing affordable housing to people 62 years and older in the
+            heart of Sonoma.
+          </p>
+          <p>
+            FAHA also manages the Event Hall, the Library, the pool, and our two
+            authentic Finnish saunas.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMMUNITY / EVENTS IMAGE BREAK ───────────────────────────── -->
+  <section id="community-events-break" class="section-bg">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- ── MONTHLY EVENTS + CELEBRATE FINNISH HOLIDAYS ─────────────── -->
+  <section id="events" class="section-white">
+    <div class="section-inner fade-in">
+      <div class="two-col">
+        <div>
+          <h3>Monthly Events</h3>
+          <div class="embed-wrapper">
+            <!-- Elfsight calendar widget — replace with your own embed code -->
+            <p style="color:#888;font-style:italic;">
+              [Events calendar embed — add your calendar widget here]
+            </p>
+          </div>
+        </div>
+        <div>
+          <h2>Celebrate Finnish<br />Holidays &amp; Traditions</h2>
+          <p>
+            FAHA hosts special cultural events throughout the year, with an
+            emphasis on Finnish holidays and traditions that bring our community
+            together. Events are open to the public, and FAHA Members enjoy
+            discounted access.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOLIDAYS IMAGE BREAK ──────────────────────────────────────── -->
+  <section id="holidays-break" class="section-bg">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- ── DIVIDER ────────────────────────────────────────────────────── -->
+  <div class="divider-container"><hr class="divider" /></div>
+
+  <!-- ── MEMBERSHIP ────────────────────────────────────────────────── -->
+  <section id="membership" class="section-white">
+    <div class="section-inner fade-in">
+      <h2>Membership</h2>
+
+      <div class="two-col">
+        <div>
+          <h3>Applications &amp; Fees</h3>
+          <p style="margin-top:0.75rem;">
+            Interested in joining FAHA?<br />
+            Please fill out our
+            <a href="#contact">Membership Application Form</a>.
+          </p>
+
+          <div style="margin-top:2rem;display:flex;flex-direction:column;gap:1.75rem;">
+            <div class="fee-group">
+              <h4>Annual Member Fees</h4>
+              <div class="fee-row">
+                <span>Adult Annual Fee</span>
+                <strong>$80</strong>
+              </div>
+              <div class="fee-row">
+                <span>Children under 13</span>
+                <strong>Free</strong>
+              </div>
+            </div>
+
+            <div class="fee-group">
+              <h4>New Member Fees</h4>
+              <p class="fee-note">
+                One time fees paid at the time of application, refunded if
+                application is not approved.
+              </p>
+              <div class="fee-row">
+                <span>Family Membership</span>
+                <strong>$500 + Annual Fee</strong>
+              </div>
+              <div class="fee-row">
+                <span>Single Membership</span>
+                <strong>$300 + Annual Fee</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3>How FAHA Works</h3>
+          <p style="margin-top:0.75rem;">
+            Our members gain access to many amenities at FAHA, including our
+            authentic saunas, heated pool, discounts on guest rooms, special
+            events, and more. Members may bring guests to FAHA for sauna and
+            pool, and must pay a fair day use fee for each guest.
+          </p>
+          <p>
+            FAHA has lasted as long as it has through the contributions of its
+            members and volunteers. If you would like to support and join FAHA,
+            you must apply for an individual or family membership. You need not
+            have Finnish or Nordic heritage to join, but you do need to be
+            willing to contribute to FAHA as a volunteer in some way.
+          </p>
+          <div style="margin-top:1rem;">
+            <a href="#contact" class="btn btn-dark">Apply for Membership</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DIVIDER ────────────────────────────────────────────────────── -->
+  <div class="divider-container"><hr class="divider" /></div>
+
+  <!-- ── LÖYLY BG (sauna image — above sauna description) ──────────── -->
+  <section id="loyly" class="section-bg">
+    <div class="overlay"></div>
+    <div class="section-inner fade-in">
+      <!-- visual break -->
+    </div>
+  </section>
+
+  <!-- ── FINNISH SAUNAS ─────────────────────────────────────────────── -->
+  <section id="saunas" class="section-white">
+    <div class="section-inner fade-in">
+      <h2>Finnish Saunas</h2>
+
+      <div class="two-col">
+        <div>
+          <h3>Sauna Hours &amp; Fees</h3>
+          <p style="margin-top:0.5rem;font-size:0.88em;font-style:italic;">
+            Guests may only use saunas when accompanied by an active Member.
+          </p>
+
+          <div class="hours-fees-grid" style="margin-top:1.25rem;">
+            <div class="hours-block">
+              <h4>Hours</h4>
+              <div class="hours-season">
+                <strong>Summer, May – October</strong>
+                <ul>
+                  <li>Wednesdays, 4–7 PM</li>
+                  <li>Saturdays, 1–7 PM</li>
+                  <li>Sundays, 1–7 PM</li>
+                </ul>
+              </div>
+              <div class="hours-season">
+                <strong>Winter, November – April</strong>
+                <ul>
+                  <li>Wednesdays, 4–6 PM</li>
+                  <li>Saturdays, 1–6 PM</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="fees-block">
+              <h4>Fees</h4>
+              <ul class="fees-list">
+                <li><span class="fee-name">Members</span><span class="fee-price">Free</span></li>
+                <li><span class="fee-name">Guest Adult</span><span class="fee-price">$20</span></li>
+                <li><span class="fee-name">Guest Child</span><span class="fee-price">$5</span></li>
+              </ul>
+              <div style="margin-top:0.75rem;">
+                <h4>Private Sauna</h4>
+                <ul class="fees-list">
+                  <li>
+                    <span class="fee-name">Member &amp; up to 6 guests</span>
+                    <span class="fee-price">$30 / hr</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3>Experience Löyly</h3>
+          <p style="margin-top:0.75rem;">
+            <em>Löyly</em> is the Finnish word for the steam that is created when
+            water is poured over the hot stones in the sauna stove. Löyly is more
+            than just steam; it's also the atmosphere and feeling of the sauna
+            experience.
+          </p>
+          <p>
+            FAHA members enjoy shared access to two large and authentic Finnish
+            saunas. We keep our saunas heated above 82°C / 180°F. There are
+            showers and dressing rooms next to each sauna. We do not offer towels.
+          </p>
+          <p>
+            Members may reserve a private sauna any day of the week, based on
+            staff availability. Sauna reservations include access to the pool,
+            for up to 6 people.
+          </p>
+          <div style="margin-top:1rem;">
+            <a href="#contact" class="btn btn-dark">Contact FAHA Office for Reservations</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── POOL IMAGE BREAK ─────────────────────────────────────────── -->
+  <section id="pool-break" class="section-bg">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- ── POOL ──────────────────────────────────────────────────────── -->
+  <section id="pool" class="section-white">
+    <div class="section-inner fade-in">
+      <div class="two-col">
+        <div>
+          <h3>Pool Hours &amp; Fees</h3>
+
+          <div class="hours-fees-grid" style="margin-top:1.25rem;">
+            <div class="hours-block">
+              <h4>Hours</h4>
+              <div class="hours-season">
+                <strong>Summer, May – October</strong>
+                <ul>
+                  <li>Wednesdays, 4–7 PM</li>
+                  <li>Saturdays, 1–7 PM</li>
+                  <li>Sundays, 1–7 PM</li>
+                </ul>
+              </div>
+              <div class="hours-season">
+                <strong>Winter, November – April</strong>
+                <ul>
+                  <li>Wednesdays, 4–6 PM</li>
+                  <li>Saturdays, 1–6 PM</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="fees-block">
+              <h4>Fees</h4>
+              <ul class="fees-list">
+                <li><span class="fee-name">Members</span><span class="fee-price">Free</span></li>
+                <li><span class="fee-name">Guests</span><span class="fee-price">Included with Sauna</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3>Heated Pool</h3>
+          <p style="margin-top:0.75rem;">
+            FAHA members enjoy access to an eight foot deep pool, with a classic
+            diving board. There is generally no lifeguard on duty, though we do
+            hire one for some Summer events.
+          </p>
+          <p>
+            We offer dressing rooms and bathrooms, sun umbrellas, chaise lounges,
+            tables, chairs, and grass around the patio. There are often communal
+            pool toys available for use.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── OVERNIGHT BREAK ───────────────────────────────────────────── -->
+  <section id="overnight-break" class="section-bg">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- ── PRIVATE EVENT RENTALS ──────────────────────────────────────── -->
+  <section id="events-rentals" class="section-white">
+    <div class="section-inner fade-in">
+      <h2>Private Event Rentals</h2>
+      <p style="max-width:48rem;">
+        FAHA's beautiful buildings and grounds are available for rent. We love
+        hosting weddings, parties, meetings, work retreats, family reunions, and
+        other private events.
+      </p>
+
+      <div class="rental-features">
+        <div class="rental-feature">
+          <h4>Grand Event Hall</h4>
+          <p>
+            Our facilities include a large Hall with hardwood floors and soaring
+            ceilings, featuring a modern audio system with microphones, a stage,
+            tables and chairs for 100, and a kitchen built for hosting big
+            parties.
+          </p>
+        </div>
+        <div class="rental-feature">
+          <h4>Bar &amp; Snack Bar</h4>
+          <p>
+            Our bars look out onto our covered outdoor dining area through large
+            windows, and feature refrigerators, sinks, stove, oven, microwave,
+            and additional seating.
+          </p>
+        </div>
+        <div class="rental-feature">
+          <h4>Gazebo</h4>
+          <p>
+            A beautiful outdoor covered space perfect for ceremonies, receptions,
+            and gatherings surrounded by the FAHA grounds.
+          </p>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;">
+        <a href="#contact" class="btn btn-dark">Contact us to learn more</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RENTALS / OVERNIGHT IMAGE BREAK ───────────────────────────── -->
+  <section id="rentals-overnight-break" class="section-bg">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- ── OVERNIGHT STAYS ───────────────────────────────────────────── -->
+  <section id="overnight" class="section-white">
+    <div class="section-inner fade-in">
+      <h3>Overnight Stays</h3>
+      <p style="max-width:42rem;">
+        FAHA offers a variety of accommodations for short-term stays, including
+        furnished guest rooms, a larger unit for longer stays, and camping around
+        the grounds.
+      </p>
+
+      <div class="accommodation-grid">
+        <div class="accommodation-card">
+          <h4>6 Guest Rooms</h4>
+          <p>
+            Featuring 2 twin beds and full bathroom.<br />
+            <em>* 1 room sleeps 4, with bunk bed</em>
+          </p>
+          <div class="price">
+            Members: $100 / night<br />
+            Guests: $150 / night
+          </div>
+        </div>
+
+        <div class="accommodation-card">
+          <h4>Upstairs Family Unit</h4>
+          <p>
+            Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes,
+            linens, and laundry facilities. Sleeps 6 (8 with sleeping bags).
+            Includes sauna and pool access.
+          </p>
+          <div class="price">
+            $250 / night<br />
+            <em style="font-weight:300;">Minimum 2 nights</em>
+          </div>
+        </div>
+
+        <div class="accommodation-card">
+          <h4>Camping</h4>
+          <p>
+            Camp on the FAHA grounds. Contact the office to reserve your spot
+            and confirm availability.
+          </p>
+          <div class="price">$20 / night</div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <a href="#contact" class="btn btn-dark">Contact us to learn more</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── OVERNIGHT / CONTACT IMAGE BREAK ──────────────────────────── -->
+  <section id="contact-break" class="section-bg">
+    <div class="overlay"></div>
+  </section>
+
+  <!-- ── CONTACT ───────────────────────────────────────────────────── -->
+  <section id="contact" class="section-white">
+    <div class="section-inner fade-in">
+      <h2>Contact FAHA</h2>
+      <p>Our office is open Mondays through Saturdays, from 8 AM to 5 PM.</p>
+
+      <div class="contact-grid">
+        <!-- Contact info -->
+        <div class="contact-info">
+          <div class="contact-info-item">
+            <span class="ci-label">Phone</span>
+            <span class="ci-value">
+              <a href="tel:+17079350200" style="text-decoration:none;">707-935-0200</a>
+            </span>
+          </div>
+          <div class="contact-info-item">
+            <span class="ci-label">Email</span>
+            <span class="ci-value">
+              <a href="mailto:office@fahausa.org" style="text-decoration:none;">office@fahausa.org</a>
+            </span>
+          </div>
+          <div class="contact-info-item">
+            <span class="ci-label">Address</span>
+            <span class="ci-value">
+              197 W. Verano Avenue<br />Sonoma, CA 95476
+            </span>
+          </div>
+        </div>
+
+        <!-- Contact form -->
+        <form
+          class="contact-form"
+          action="https://formspree.io/f/YOUR_FORM_ID"
+          method="POST"
+        >
+          <div class="form-row">
+            <div class="form-field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="Your name" required />
+            </div>
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="your@email.com" required />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="How can we help?" />
+          </div>
+          <div class="form-field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Your message..." required></textarea>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-dark">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEWSLETTER ─────────────────────────────────────────────────── -->
+  <section id="newsletter" class="section-white">
+    <div class="section-inner fade-in">
+      <h3>FAHA Newsletter</h3>
+      <p>
+        We send an email every two weeks, featuring news about upcoming events,
+        volunteer opportunities, resources for members, photos, and more.
+      </p>
+      <form
+        class="newsletter-form"
+        action="https://formspree.io/f/YOUR_NEWSLETTER_ID"
+        method="POST"
+      >
+        <input type="email" name="email" placeholder="Your email address" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer id="footer">
+    <div class="section-inner">
+      <span class="footer-name">Finnish American Home Association</span>
+      <div class="social-links">
+        <a
+          href="https://www.instagram.com/sonomafaha"
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram"
+        >Instagram</a>
+        <a
+          href="https://www.facebook.com/fahafinn/"
+          target="_blank"
+          rel="noopener"
+          aria-label="Facebook"
+        >Facebook</a>
+        <a href="mailto:office@fahausa.org" aria-label="Email">Email</a>
+      </div>
+    </div>
+  </footer>
+</Layout>
+
+<script>
+  // Scroll-triggered fade-in animations
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+
+  document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+</script>
