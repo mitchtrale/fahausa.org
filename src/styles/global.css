@@ -129,6 +129,8 @@ p:last-child { margin-bottom: 0; }
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  height: 50vh;
+  min-height: 16rem;
 }
 .section-bg .overlay {
   position: absolute;
@@ -220,15 +222,11 @@ p:last-child { margin-bottom: 0; }
 /* ── Community / events image break ─────────────────────────── */
 #community-events-break {
   background-image: url('/assets/images/container01.jpg');
-  height: 45vh;
-  min-height: 16rem;
 }
 
 /* ── Pool image break ────────────────────────────────────────── */
 #pool-break {
   background-image: url('/assets/images/container09.jpg');
-  height: 45vh;
-  min-height: 16rem;
 }
 
 /* ── Events + Holidays section ───────────────────────────────── */
@@ -242,8 +240,6 @@ p:last-child { margin-bottom: 0; }
 /* ── Holidays image break ────────────────────────────────────── */
 #holidays-break {
   background-image: url('/assets/images/container12.jpg');
-  height: 45vh;
-  min-height: 16rem;
 }
 
 /* ── Membership ──────────────────────────────────────────────── */
@@ -308,10 +304,6 @@ p:last-child { margin-bottom: 0; }
 #loyly {
   background-image: url('/assets/images/container05.jpg');
 }
-#loyly .section-inner {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
-}
 
 /* ── Pool section ────────────────────────────────────────────── */
 #pool .section-inner { gap: 3rem; }
@@ -319,26 +311,25 @@ p:last-child { margin-bottom: 0; }
 /* ── Overnight break + section ───────────────────────────────── */
 #overnight-break {
   background-image: url('/assets/images/container06.jpg');
-  height: 45vh;
-  min-height: 16rem;
 }
 #overnight h3 { font-size: 2em; }
 
 /* ── Rentals / overnight image break ─────────────────────────── */
 #rentals-overnight-break {
   background-image: url('/assets/images/container12.jpg');
-  height: 45vh;
-  min-height: 16rem;
 }
 
 /* ── Private Event Rentals ───────────────────────────────────── */
 #events-rentals .section-inner { gap: 2.5rem; }
 
+/* ── Membership image break ──────────────────────────────────── */
+#membership-break {
+  background-image: url('/assets/images/container13.png');
+}
+
 /* ── Contact image break ─────────────────────────────────────── */
 #contact-break {
   background-image: url('/assets/images/container13.png');
-  height: 45vh;
-  min-height: 16rem;
 }
 
 /* ── Contact ─────────────────────────────────────────────────── */
