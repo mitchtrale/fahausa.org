@@ -254,9 +254,6 @@ import Layout from '../layouts/Layout.astro';
             staff availability. Sauna reservations include access to the pool,
             for up to 6 people.
           </p>
-          <div style="margin-top:1rem;">
-            <a href="#contact" class="btn btn-dark">Contact FAHA Office for Reservations</a>
-          </div>
         </div>
       </div>
     </div>
@@ -270,6 +267,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- ── POOL ──────────────────────────────────────────────────────── -->
   <section id="pool" class="section-white">
     <div class="section-inner fade-in">
+      <h2>Community Pool</h2>
       <div class="two-col">
         <div>
           <h3>Pool Hours &amp; Fees</h3>
@@ -305,7 +303,7 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div>
-          <h3>Heated Pool</h3>
+          <h3>Pool Details</h3>
           <p style="margin-top:0.75rem;">
             FAHA members enjoy access to an eight foot deep pool, with a classic
             diving board. There is generally no lifeguard on duty, though we do
@@ -463,8 +461,7 @@ import Layout from '../layouts/Layout.astro';
         <!-- Contact form -->
         <form
           class="contact-form"
-          action="https://formspree.io/f/YOUR_FORM_ID"
-          method="POST"
+          id="contact-form"
         >
           <div class="form-row">
             <div class="form-field">
@@ -488,6 +485,51 @@ import Layout from '../layouts/Layout.astro';
             <button type="submit" class="btn btn-dark">Send Message</button>
           </div>
         </form>
+        <p id="form-status" style="margin-top:0.75rem; display:none;"></p>
+        <script>
+          const WORKER_URL = 'https://faha-contact-form.mctco.workers.dev';
+
+          document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const status = document.getElementById('form-status');
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value || 'FAHA Contact Form';
+            const message = document.getElementById('message').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            status.style.display = 'none';
+
+            try {
+              const res = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  subject: `[FAHA] ${subject}`,
+                  body: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`
+                })
+              });
+
+              if (res.ok) {
+                status.textContent = 'Message sent! We will get back to you soon.';
+                status.style.color = '#2e7d32';
+                status.style.display = 'block';
+                this.reset();
+              } else {
+                throw new Error('Failed to send');
+              }
+            } catch (err) {
+              status.textContent = 'Sorry, something went wrong. Please email us directly.';
+              status.style.color = '#c62828';
+              status.style.display = 'block';
+            } finally {
+              btn.disabled = false;
+              btn.textContent = 'Send Message';
+            }
+          });
+        </script>
       </div>
     </div>
   </section>
