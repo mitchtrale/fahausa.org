@@ -3,18 +3,30 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
+  <!-- ── TOP BAR ──────────────────────────────────────────────────── -->
+  <header id="top-bar">
+    <div class="section-inner">
+      <h1>Finnish American Home Association</h1>
+    </div>
+  </header>
+
   <!-- ── HERO ─────────────────────────────────────────────────────── -->
   <section id="hero" class="section-white">
     <div class="section-inner fade-in">
-      <h1>Finnish American Home Association</h1>
-      <img src="/assets/images/image01.jpg" alt="FAHA" class="hero-img" />
-      <h3>A Place for Finns and Friends</h3>
-      <p>
-        FAHA is a participatory organization. We promote a sense of community,
-        common heritage and a caring environment for all ages. We provide housing
-        and care for the elderly. We foster Finnish cultural and educational
-        activities that bridge the generations.
-      </p>
+      <div class="hero-layout">
+        <div class="hero-logo">
+          <img src="/assets/images/image01.jpg" alt="FAHA" class="hero-img" />
+        </div>
+        <div class="hero-text">
+          <h3>A Place for Finns and Friends</h3>
+          <p>
+            FAHA is a participatory organization. We promote a sense of community,
+            common heritage and a caring environment for all ages. We provide housing
+            and care for the elderly. We foster Finnish cultural and educational
+            activities that bridge the generations.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -171,11 +183,6 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- ── HOLIDAYS IMAGE BREAK ──────────────────────────────────────── -->
-  <section id="holidays-break" class="section-bg">
-    <div class="overlay"></div>
   </section>
 
   <!-- ── LÖYLY BG (sauna image — above sauna description) ──────────── -->
@@ -377,7 +384,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- ── OVERNIGHT STAYS ───────────────────────────────────────────── -->
   <section id="overnight" class="section-white">
     <div class="section-inner fade-in">
-      <h3>Overnight Stays</h3>
+      <h2>Overnight Stays</h2>
       <p style="max-width:42rem;">
         FAHA offers a variety of accommodations for short-term stays, including
         furnished guest rooms, a larger unit for longer stays, and camping around
