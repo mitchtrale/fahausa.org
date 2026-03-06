@@ -53,18 +53,30 @@ const overnightStays = await md('overnight_stays');
 ---
 
 <Layout>
+  <!-- ── TOP BAR ──────────────────────────────────────────────────── -->
+  <header id="top-bar">
+    <div class="section-inner">
+      <h1>Finnish American Home Association</h1>
+    </div>
+  </header>
+
   <!-- ── HERO ─────────────────────────────────────────────────────── -->
   <section id="hero" class="section-white">
     <div class="section-inner fade-in">
-      <h1>Finnish American Home Association</h1>
-      <img src="/assets/images/image01.jpg" alt="FAHA" class="hero-img" />
-      <h3>A Place for Finns and Friends</h3>
-      <p>
-        FAHA is a participatory organization. We promote a sense of community,
-        common heritage and a caring environment for all ages. We provide housing
-        and care for the elderly. We foster Finnish cultural and educational
-        activities that bridge the generations.
-      </p>
+      <div class="hero-layout">
+        <div class="hero-logo">
+          <img src="/assets/images/image01.jpg" alt="FAHA" class="hero-img" />
+        </div>
+        <div class="hero-text">
+          <h3>A Place for Finns and Friends</h3>
+          <p>
+            FAHA is a participatory organization. We promote a sense of community,
+            common heritage and a caring environment for all ages. We provide housing
+            and care for the elderly. We foster Finnish cultural and educational
+            activities that bridge the generations.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -246,11 +258,6 @@ const overnightStays = await md('overnight_stays');
     </div>
   </section>
 
-  <!-- ── HOLIDAYS IMAGE BREAK ──────────────────────────────────────── -->
-  <section id="holidays-break" class="section-bg">
-    <div class="overlay"></div>
-  </section>
-
   <!-- ── LÖYLY BG (sauna image — above sauna description) ──────────── -->
   <section id="loyly" class="section-bg">
     <div class="overlay"></div>
@@ -338,9 +345,6 @@ const overnightStays = await md('overnight_stays');
             staff availability. Sauna reservations include access to the pool,
             for up to 6 people.
           </p>
-          <div style="margin-top:1rem;">
-            <a href="#contact" class="btn btn-dark">Contact FAHA Office for Reservations</a>
-          </div>
         </div>
       </div>
     </div>
@@ -354,6 +358,7 @@ const overnightStays = await md('overnight_stays');
   <!-- ── POOL ──────────────────────────────────────────────────────── -->
   <section id="pool" class="section-white">
     <div class="section-inner fade-in">
+      <h2>Community Pool</h2>
       <div class="two-col">
         <div>
           <h3>Pool Hours &amp; Fees</h3>
@@ -570,8 +575,7 @@ const overnightStays = await md('overnight_stays');
         <!-- Contact form -->
         <form
           class="contact-form"
-          action="https://formspree.io/f/YOUR_FORM_ID"
-          method="POST"
+          id="contact-form"
         >
           <div class="form-row">
             <div class="form-field">
@@ -595,6 +599,51 @@ const overnightStays = await md('overnight_stays');
             <button type="submit" class="btn btn-dark">Send Message</button>
           </div>
         </form>
+        <p id="form-status" style="margin-top:0.75rem; display:none;"></p>
+        <script>
+          const WORKER_URL = 'https://faha-contact-form.mctco.workers.dev';
+
+          document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const status = document.getElementById('form-status');
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value || 'FAHA Contact Form';
+            const message = document.getElementById('message').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            status.style.display = 'none';
+
+            try {
+              const res = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  subject: `[FAHA] ${subject}`,
+                  body: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`
+                })
+              });
+
+              if (res.ok) {
+                status.textContent = 'Message sent! We will get back to you soon.';
+                status.style.color = '#2e7d32';
+                status.style.display = 'block';
+                this.reset();
+              } else {
+                throw new Error('Failed to send');
+              }
+            } catch (err) {
+              status.textContent = 'Sorry, something went wrong. Please email us directly.';
+              status.style.color = '#c62828';
+              status.style.display = 'block';
+            } finally {
+              btn.disabled = false;
+              btn.textContent = 'Send Message';
+            }
+          });
+        </script>
       </div>
     </div>
   </section>
