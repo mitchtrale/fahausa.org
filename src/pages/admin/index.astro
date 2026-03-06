@@ -1,0 +1,66 @@
+---
+import { getSessionIdFromCookie, validateSession } from '../../lib/auth';
+
+const db = (Astro.locals as any).db;
+const sessionId = getSessionIdFromCookie(Astro.request.headers.get('cookie'));
+let isAuthenticated = false;
+
+if (sessionId && db) {
+  isAuthenticated = await validateSession(db, sessionId);
+}
+
+if (isAuthenticated) {
+  return Astro.redirect('/admin/events');
+}
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FAHA Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: #f5f5f5;
+    }
+    .login-box {
+      background: #fff; padding: 2.5rem; border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%; max-width: 380px;
+    }
+    h1 { font-size: 1.25rem; margin-bottom: 1.5rem; text-align: center; }
+    label { display: block; font-weight: 500; margin-bottom: 0.25rem; font-size: 0.9rem; }
+    input {
+      width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 3px;
+      font-size: 1rem; margin-bottom: 1rem;
+    }
+    button {
+      width: 100%; padding: 0.6rem; background: #1a1a1a; color: #fff;
+      border: none; border-radius: 3px; cursor: pointer; font-size: 1rem;
+    }
+    button:hover { background: #333; }
+    .error { color: #cc0000; font-size: 0.9rem; margin-bottom: 1rem; text-align: center; }
+    .back { display: block; text-align: center; margin-top: 1.5rem; color: #666; font-size: 0.85rem; text-decoration: none; }
+    .back:hover { color: #333; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>FAHA Admin</h1>
+    {error === 'invalid_password' && <p class="error">Invalid password. Please try again.</p>}
+    {error === 'session_expired' && <p class="error">Session expired. Please log in again.</p>}
+    {error === 'not_logged_in' && <p class="error">Please log in to continue.</p>}
+    {error === 'no_db' && <p class="error">Database not available. Check your configuration.</p>}
+    <form method="POST" action="/api/auth/login">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" autofocus required />
+      <button type="submit">Log In</button>
+    </form>
+    <a href="/" class="back">&larr; Back to site</a>
+  </div>
+</body>
+</html>

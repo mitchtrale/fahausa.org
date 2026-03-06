@@ -1,0 +1,21 @@
+name = "fahausa-org"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "dist"
+
+# D1 database — local dev uses automatic local SQLite via platformProxy
+# Production database_id is set after running: wrangler d1 create faha-db
+[[d1_databases]]
+binding = "DB"
+database_name = "faha-db"
+database_id = "f5ddd6ff-d481-4b02-bfdf-168f5aafc63c"
+
+# R2 bucket — local dev uses automatic local storage via platformProxy
+# Production bucket created via: wrangler r2 bucket create faha-media
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "faha-media"
+
+# Non-sensitive config vars (secrets like ADMIN_PASSWORD go in .dev.vars locally
+# and are set via CF Pages dashboard or `wrangler secret put` for production)
+[vars]
+R2_PUBLIC_URL = ""
