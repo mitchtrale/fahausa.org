@@ -1,5 +1,55 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { marked } from 'marked';
+import { siteContent, events, eventOccurrences } from '../db/schema';
+import { eq, gte, and, asc } from 'drizzle-orm';
+
+// --- DB content with fallback ---
+const db = (Astro.locals as any).db;
+
+// Load site content from DB
+let content: Record<string, string> = {};
+try {
+  if (db) {
+    const rows = await db.select().from(siteContent);
+    for (const row of rows) {
+      content[row.sectionKey] = row.content;
+    }
+  }
+} catch (e) {
+  console.error('Failed to load site content from DB:', e);
+}
+
+// Load upcoming events from DB
+let upcomingEvents: any[] = [];
+try {
+  if (db) {
+    const today = new Date().toISOString().slice(0, 10);
+    upcomingEvents = await db
+      .select()
+      .from(events)
+      .where(and(eq(events.published, true), gte(events.dateStart, today)))
+      .orderBy(asc(events.dateStart))
+      .limit(8);
+  }
+} catch (e) {
+  console.error('Failed to load events from DB:', e);
+}
+
+// Helper: render markdown from DB, or return null if not in DB
+async function md(key: string): Promise<string | null> {
+  if (!content[key]) return null;
+  return await marked.parse(content[key]);
+}
+
+const membershipPricing = await md('membership_pricing');
+const membershipDescription = await md('membership_description');
+const saunaHours = await md('sauna_hours');
+const saunaPricing = await md('sauna_pricing');
+const poolHours = await md('pool_hours');
+const poolInfo = await md('pool_info');
+const eventRentals = await md('event_rentals');
+const overnightStays = await md('overnight_stays');
 ---
 
 <Layout>
@@ -97,52 +147,62 @@ import Layout from '../layouts/Layout.astro';
             <a href="#contact">Membership Application Form</a>.
           </p>
 
-          <div style="margin-top:2rem;display:flex;flex-direction:column;gap:1.75rem;">
-            <div class="fee-group">
-              <h4>Annual Member Fees</h4>
-              <div class="fee-row">
-                <span>Adult Annual Fee</span>
-                <strong>$80</strong>
+          {membershipPricing ? (
+            <div class="db-content" style="margin-top:2rem;" set:html={membershipPricing} />
+          ) : (
+            <div style="margin-top:2rem;display:flex;flex-direction:column;gap:1.75rem;">
+              <div class="fee-group">
+                <h4>Annual Member Fees</h4>
+                <div class="fee-row">
+                  <span>Adult Annual Fee</span>
+                  <strong>$80</strong>
+                </div>
+                <div class="fee-row">
+                  <span>Children under 13</span>
+                  <strong>Free</strong>
+                </div>
               </div>
-              <div class="fee-row">
-                <span>Children under 13</span>
-                <strong>Free</strong>
-              </div>
-            </div>
 
-            <div class="fee-group">
-              <h4>New Member Fees</h4>
-              <p class="fee-note">
-                One time fees paid at the time of application, refunded if
-                application is not approved.
-              </p>
-              <div class="fee-row">
-                <span>Family Membership</span>
-                <strong>$500 + Annual Fee</strong>
-              </div>
-              <div class="fee-row">
-                <span>Single Membership</span>
-                <strong>$300 + Annual Fee</strong>
+              <div class="fee-group">
+                <h4>New Member Fees</h4>
+                <p class="fee-note">
+                  One time fees paid at the time of application, refunded if
+                  application is not approved.
+                </p>
+                <div class="fee-row">
+                  <span>Family Membership</span>
+                  <strong>$500 + Annual Fee</strong>
+                </div>
+                <div class="fee-row">
+                  <span>Single Membership</span>
+                  <strong>$300 + Annual Fee</strong>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div>
           <h3>How FAHA Works</h3>
-          <p style="margin-top:0.75rem;">
-            Our members gain access to many amenities at FAHA, including our
-            authentic saunas, heated pool, discounts on guest rooms, special
-            events, and more. Members may bring guests to FAHA for sauna and
-            pool, and must pay a fair day use fee for each guest.
-          </p>
-          <p>
-            FAHA has lasted as long as it has through the contributions of its
-            members and volunteers. If you would like to support and join FAHA,
-            you must apply for an individual or family membership. You need not
-            have Finnish or Nordic heritage to join, but you do need to be
-            willing to contribute to FAHA as a volunteer in some way.
-          </p>
+          {membershipDescription ? (
+            <div class="db-content" style="margin-top:0.75rem;" set:html={membershipDescription} />
+          ) : (
+            <>
+              <p style="margin-top:0.75rem;">
+                Our members gain access to many amenities at FAHA, including our
+                authentic saunas, heated pool, discounts on guest rooms, special
+                events, and more. Members may bring guests to FAHA for sauna and
+                pool, and must pay a fair day use fee for each guest.
+              </p>
+              <p>
+                FAHA has lasted as long as it has through the contributions of its
+                members and volunteers. If you would like to support and join FAHA,
+                you must apply for an individual or family membership. You need not
+                have Finnish or Nordic heritage to join, but you do need to be
+                willing to contribute to FAHA as a volunteer in some way.
+              </p>
+            </>
+          )}
           <div style="margin-top:1rem;">
             <a href="#contact" class="btn btn-dark">Apply for Membership</a>
           </div>
@@ -164,12 +224,25 @@ import Layout from '../layouts/Layout.astro';
     <div class="section-inner fade-in">
       <div class="two-col">
         <div>
-          <h3>Monthly Events</h3>
+          <h3>Upcoming Events</h3>
           <div class="embed-wrapper">
-            <!-- Elfsight calendar widget — replace with your own embed code -->
-            <p style="color:#888;font-style:italic;">
-              [Events calendar embed — add your calendar widget here]
-            </p>
+            {upcomingEvents.length > 0 ? (
+              <ul class="events-list">
+                {upcomingEvents.map((event: any) => (
+                  <li class="event-item">
+                    <span class="event-date">{event.dateStart}</span>
+                    <span class="event-title">{event.title}</span>
+                    {event.timeStart && <span class="event-time">{event.timeStart}{event.timeEnd ? `–${event.timeEnd}` : ''}</span>}
+                    {event.ticketPrice && <span class="event-price">{event.ticketPrice}</span>}
+                    {event.rsvpUrl && <a href={event.rsvpUrl} class="event-rsvp" target="_blank" rel="noopener">RSVP</a>}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style="color:#888;font-style:italic;">
+                Check back soon for upcoming events.
+              </p>
+            )}
           </div>
         </div>
         <div>
@@ -201,48 +274,57 @@ import Layout from '../layouts/Layout.astro';
       <div class="two-col">
         <div>
           <h3>Sauna Hours &amp; Fees</h3>
-          <p style="margin-top:0.5rem;font-size:0.88em;font-style:italic;">
-            Guests may only use saunas when accompanied by an active Member.
-          </p>
-
-          <div class="hours-fees-grid" style="margin-top:1.25rem;">
-            <div class="hours-block">
-              <h4>Hours</h4>
-              <div class="hours-season">
-                <strong>Summer, May – October</strong>
-                <ul>
-                  <li>Wednesdays, 4–7 PM</li>
-                  <li>Saturdays, 1–7 PM</li>
-                  <li>Sundays, 1–7 PM</li>
-                </ul>
-              </div>
-              <div class="hours-season">
-                <strong>Winter, November – April</strong>
-                <ul>
-                  <li>Wednesdays, 4–6 PM</li>
-                  <li>Saturdays, 1–6 PM</li>
-                </ul>
-              </div>
+          {(saunaHours || saunaPricing) ? (
+            <div style="margin-top:1.25rem;">
+              {saunaHours && <div class="db-content" set:html={saunaHours} />}
+              {saunaPricing && <div class="db-content" style="margin-top:1rem;" set:html={saunaPricing} />}
             </div>
+          ) : (
+            <>
+              <p style="margin-top:0.5rem;font-size:0.88em;font-style:italic;">
+                Guests may only use saunas when accompanied by an active Member.
+              </p>
 
-            <div class="fees-block">
-              <h4>Fees</h4>
-              <ul class="fees-list">
-                <li><span class="fee-name">Members</span><span class="fee-price">Free</span></li>
-                <li><span class="fee-name">Guest Adult</span><span class="fee-price">$20</span></li>
-                <li><span class="fee-name">Guest Child</span><span class="fee-price">$5</span></li>
-              </ul>
-              <div style="margin-top:0.75rem;">
-                <h4>Private Sauna</h4>
-                <ul class="fees-list">
-                  <li>
-                    <span class="fee-name">Member &amp; up to 6 guests</span>
-                    <span class="fee-price">$30 / hr</span>
-                  </li>
-                </ul>
+              <div class="hours-fees-grid" style="margin-top:1.25rem;">
+                <div class="hours-block">
+                  <h4>Hours</h4>
+                  <div class="hours-season">
+                    <strong>Summer, May – October</strong>
+                    <ul>
+                      <li>Wednesdays, 4–7 PM</li>
+                      <li>Saturdays, 1–7 PM</li>
+                      <li>Sundays, 1–7 PM</li>
+                    </ul>
+                  </div>
+                  <div class="hours-season">
+                    <strong>Winter, November – April</strong>
+                    <ul>
+                      <li>Wednesdays, 4–6 PM</li>
+                      <li>Saturdays, 1–6 PM</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="fees-block">
+                  <h4>Fees</h4>
+                  <ul class="fees-list">
+                    <li><span class="fee-name">Members</span><span class="fee-price">Free</span></li>
+                    <li><span class="fee-name">Guest Adult</span><span class="fee-price">$20</span></li>
+                    <li><span class="fee-name">Guest Child</span><span class="fee-price">$5</span></li>
+                  </ul>
+                  <div style="margin-top:0.75rem;">
+                    <h4>Private Sauna</h4>
+                    <ul class="fees-list">
+                      <li>
+                        <span class="fee-name">Member &amp; up to 6 guests</span>
+                        <span class="fee-price">$30 / hr</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         <div>
@@ -280,49 +362,60 @@ import Layout from '../layouts/Layout.astro';
       <div class="two-col">
         <div>
           <h3>Pool Hours &amp; Fees</h3>
-
-          <div class="hours-fees-grid" style="margin-top:1.25rem;">
-            <div class="hours-block">
-              <h4>Hours</h4>
-              <div class="hours-season">
-                <strong>Summer, May – October</strong>
-                <ul>
-                  <li>Wednesdays, 4–7 PM</li>
-                  <li>Saturdays, 1–7 PM</li>
-                  <li>Sundays, 1–7 PM</li>
-                </ul>
+          {(poolHours || poolInfo) ? (
+            <div style="margin-top:1.25rem;">
+              {poolHours && <div class="db-content" set:html={poolHours} />}
+            </div>
+          ) : (
+            <div class="hours-fees-grid" style="margin-top:1.25rem;">
+              <div class="hours-block">
+                <h4>Hours</h4>
+                <div class="hours-season">
+                  <strong>Summer, May – October</strong>
+                  <ul>
+                    <li>Wednesdays, 4–7 PM</li>
+                    <li>Saturdays, 1–7 PM</li>
+                    <li>Sundays, 1–7 PM</li>
+                  </ul>
+                </div>
+                <div class="hours-season">
+                  <strong>Winter, November – April</strong>
+                  <ul>
+                    <li>Wednesdays, 4–6 PM</li>
+                    <li>Saturdays, 1–6 PM</li>
+                  </ul>
+                </div>
               </div>
-              <div class="hours-season">
-                <strong>Winter, November – April</strong>
-                <ul>
-                  <li>Wednesdays, 4–6 PM</li>
-                  <li>Saturdays, 1–6 PM</li>
+
+              <div class="fees-block">
+                <h4>Fees</h4>
+                <ul class="fees-list">
+                  <li><span class="fee-name">Members</span><span class="fee-price">Free</span></li>
+                  <li><span class="fee-name">Guests</span><span class="fee-price">Included with Sauna</span></li>
                 </ul>
               </div>
             </div>
-
-            <div class="fees-block">
-              <h4>Fees</h4>
-              <ul class="fees-list">
-                <li><span class="fee-name">Members</span><span class="fee-price">Free</span></li>
-                <li><span class="fee-name">Guests</span><span class="fee-price">Included with Sauna</span></li>
-              </ul>
-            </div>
-          </div>
+          )}
         </div>
 
         <div>
-          <h3>Pool Details</h3>
-          <p style="margin-top:0.75rem;">
-            FAHA members enjoy access to an eight foot deep pool, with a classic
-            diving board. There is generally no lifeguard on duty, though we do
-            hire one for some Summer events.
-          </p>
-          <p>
-            We offer dressing rooms and bathrooms, sun umbrellas, chaise lounges,
-            tables, chairs, and grass around the patio. There are often communal
-            pool toys available for use.
-          </p>
+          <h3>Heated Pool</h3>
+          {poolInfo ? (
+            <div class="db-content" style="margin-top:0.75rem;" set:html={poolInfo} />
+          ) : (
+            <>
+              <p style="margin-top:0.75rem;">
+                FAHA members enjoy access to an eight foot deep pool, with a classic
+                diving board. There is generally no lifeguard on duty, though we do
+                hire one for some Summer events.
+              </p>
+              <p>
+                We offer dressing rooms and bathrooms, sun umbrellas, chaise lounges,
+                tables, chairs, and grass around the patio. There are often communal
+                pool toys available for use.
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -337,42 +430,48 @@ import Layout from '../layouts/Layout.astro';
   <section id="events-rentals" class="section-white">
     <div class="section-inner fade-in">
       <h2>Private Event Rentals</h2>
-      <p style="max-width:48rem;">
-        FAHA's beautiful buildings and grounds are available for rent. We love
-        hosting weddings, parties, meetings, work retreats, family reunions, and
-        other private events.
-      </p>
+      {eventRentals ? (
+        <div class="db-content" set:html={eventRentals} />
+      ) : (
+        <>
+          <p style="max-width:48rem;">
+            FAHA's beautiful buildings and grounds are available for rent. We love
+            hosting weddings, parties, meetings, work retreats, family reunions, and
+            other private events.
+          </p>
 
-      <div class="rental-features">
-        <div class="rental-feature">
-          <h4>Grand Event Hall</h4>
-          <p>
-            Our facilities include a large Hall with hardwood floors and soaring
-            ceilings, featuring a modern audio system with microphones, a stage,
-            tables and chairs for 100, and a kitchen built for hosting big
-            parties.
-          </p>
-        </div>
-        <div class="rental-feature">
-          <h4>Bar &amp; Snack Bar</h4>
-          <p>
-            Our bars look out onto our covered outdoor dining area through large
-            windows, and feature refrigerators, sinks, stove, oven, microwave,
-            and additional seating.
-          </p>
-        </div>
-        <div class="rental-feature">
-          <h4>Gazebo</h4>
-          <p>
-            A beautiful outdoor covered space perfect for ceremonies, receptions,
-            and gatherings surrounded by the FAHA grounds.
-          </p>
-        </div>
-      </div>
+          <div class="rental-features">
+            <div class="rental-feature">
+              <h4>Grand Event Hall</h4>
+              <p>
+                Our facilities include a large Hall with hardwood floors and soaring
+                ceilings, featuring a modern audio system with microphones, a stage,
+                tables and chairs for 100, and a kitchen built for hosting big
+                parties.
+              </p>
+            </div>
+            <div class="rental-feature">
+              <h4>Bar &amp; Snack Bar</h4>
+              <p>
+                Our bars look out onto our covered outdoor dining area through large
+                windows, and feature refrigerators, sinks, stove, oven, microwave,
+                and additional seating.
+              </p>
+            </div>
+            <div class="rental-feature">
+              <h4>Gazebo</h4>
+              <p>
+                A beautiful outdoor covered space perfect for ceremonies, receptions,
+                and gatherings surrounded by the FAHA grounds.
+              </p>
+            </div>
+          </div>
 
-      <div style="margin-top:1rem;">
-        <a href="#contact" class="btn btn-dark">Contact us to learn more</a>
-      </div>
+          <div style="margin-top:1rem;">
+            <a href="#contact" class="btn btn-dark">Contact us to learn more</a>
+          </div>
+        </>
+      )}
     </div>
   </section>
 
@@ -384,52 +483,58 @@ import Layout from '../layouts/Layout.astro';
   <!-- ── OVERNIGHT STAYS ───────────────────────────────────────────── -->
   <section id="overnight" class="section-white">
     <div class="section-inner fade-in">
-      <h2>Overnight Stays</h2>
-      <p style="max-width:42rem;">
-        FAHA offers a variety of accommodations for short-term stays, including
-        furnished guest rooms, a larger unit for longer stays, and camping around
-        the grounds.
-      </p>
-
-      <div class="accommodation-grid">
-        <div class="accommodation-card">
-          <h4>6 Guest Rooms</h4>
-          <p>
-            Featuring 2 twin beds and full bathroom.<br />
-            <em>* 1 room sleeps 4, with bunk bed</em>
+      <h3>Overnight Stays</h3>
+      {overnightStays ? (
+        <div class="db-content" set:html={overnightStays} />
+      ) : (
+        <>
+          <p style="max-width:42rem;">
+            FAHA offers a variety of accommodations for short-term stays, including
+            furnished guest rooms, a larger unit for longer stays, and camping around
+            the grounds.
           </p>
-          <div class="price">
-            Members: $100 / night<br />
-            Guests: $150 / night
+
+          <div class="accommodation-grid">
+            <div class="accommodation-card">
+              <h4>6 Guest Rooms</h4>
+              <p>
+                Featuring 2 twin beds and full bathroom.<br />
+                <em>* 1 room sleeps 4, with bunk bed</em>
+              </p>
+              <div class="price">
+                Members: $100 / night<br />
+                Guests: $150 / night
+              </div>
+            </div>
+
+            <div class="accommodation-card">
+              <h4>Upstairs Family Unit</h4>
+              <p>
+                Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes,
+                linens, and laundry facilities. Sleeps 6 (8 with sleeping bags).
+                Includes sauna and pool access.
+              </p>
+              <div class="price">
+                $250 / night<br />
+                <em style="font-weight:300;">Minimum 2 nights</em>
+              </div>
+            </div>
+
+            <div class="accommodation-card">
+              <h4>Camping</h4>
+              <p>
+                Camp on the FAHA grounds. Contact the office to reserve your spot
+                and confirm availability.
+              </p>
+              <div class="price">$20 / night</div>
+            </div>
           </div>
-        </div>
 
-        <div class="accommodation-card">
-          <h4>Upstairs Family Unit</h4>
-          <p>
-            Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes,
-            linens, and laundry facilities. Sleeps 6 (8 with sleeping bags).
-            Includes sauna and pool access.
-          </p>
-          <div class="price">
-            $250 / night<br />
-            <em style="font-weight:300;">Minimum 2 nights</em>
+          <div style="margin-top:1.5rem;">
+            <a href="#contact" class="btn btn-dark">Contact us to learn more</a>
           </div>
-        </div>
-
-        <div class="accommodation-card">
-          <h4>Camping</h4>
-          <p>
-            Camp on the FAHA grounds. Contact the office to reserve your spot
-            and confirm availability.
-          </p>
-          <div class="price">$20 / night</div>
-        </div>
-      </div>
-
-      <div style="margin-top:1.5rem;">
-        <a href="#contact" class="btn btn-dark">Contact us to learn more</a>
-      </div>
+        </>
+      )}
     </div>
   </section>
 

@@ -1,0 +1,163 @@
+---
+import { desc, eq } from 'drizzle-orm';
+import { events, eventRecurrence } from '../../../db/schema';
+
+const db = (Astro.locals as any).db;
+const allEvents = db
+  ? await db.select().from(events).orderBy(desc(events.dateStart))
+  : [];
+
+const saved = Astro.url.searchParams.get('saved');
+const deleted = Astro.url.searchParams.get('deleted');
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Events — FAHA Admin</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <nav>
+    <strong>FAHA Admin</strong>
+    <a href="/admin/events">Events</a>
+    <a href="/admin/content">Content</a>
+    <form method="POST" action="/api/auth/logout" class="logout" style="margin-left:auto;">
+      <button type="submit" class="btn-small btn-secondary">Logout</button>
+    </form>
+  </nav>
+
+  <h1>Events</h1>
+
+  {saved && <div class="message message-success">Event saved successfully.</div>}
+  {deleted && <div class="message message-success">Event deleted.</div>}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {allEvents.length === 0 && (
+        <tr><td colspan="5" style="text-align:center;color:#888;">No events yet.</td></tr>
+      )}
+      {allEvents.map((event: any) => (
+        <tr>
+          <td>{event.title}</td>
+          <td>{event.dateStart}{event.dateEnd ? ` – ${event.dateEnd}` : ''}</td>
+          <td>{event.timeStart || '—'}{event.timeEnd ? ` – ${event.timeEnd}` : ''}</td>
+          <td>
+            {event.published
+              ? <span class="badge badge-green">Published</span>
+              : <span class="badge badge-gray">Draft</span>
+            }
+          </td>
+          <td class="actions">
+            <a href={`/admin/events/${event.id}`} class="btn btn-small">Edit</a>
+            <form method="POST" action={`/api/events/${event.id}`} style="display:inline;">
+              <input type="hidden" name="_method" value="DELETE" />
+              <button type="submit" class="btn btn-small btn-danger"
+                onclick="return confirm('Delete this event?')">Delete</button>
+            </form>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <hr />
+  <h2>Create Event</h2>
+  <form method="POST" action="/api/events">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input type="text" id="title" name="title" required />
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" value="FAHA, 197 W. Verano Avenue, Sonoma, CA 95476" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="date_start">Start Date *</label>
+        <input type="date" id="date_start" name="date_start" required />
+      </div>
+      <div class="form-group">
+        <label for="date_end">End Date</label>
+        <input type="date" id="date_end" name="date_end" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="time_start">Start Time</label>
+        <input type="time" id="time_start" name="time_start" />
+      </div>
+      <div class="form-group">
+        <label for="time_end">End Time</label>
+        <input type="time" id="time_end" name="time_end" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description (Markdown)</label>
+      <textarea id="description" name="description" rows="6"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="ticket_price">Ticket Price</label>
+        <input type="text" id="ticket_price" name="ticket_price" placeholder="e.g., $20 members / $30 guests" />
+      </div>
+      <div class="form-group">
+        <label for="rsvp_url">RSVP URL</label>
+        <input type="url" id="rsvp_url" name="rsvp_url" placeholder="https://..." />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="image_url">Image URL</label>
+      <input type="text" id="image_url" name="image_url" placeholder="Paste URL or upload below" />
+      <input type="file" id="image_file" accept="image/jpeg,image/png,image/webp" style="margin-top:0.5rem;" />
+    </div>
+
+    <div class="form-group">
+      <div class="checkbox-row">
+        <input type="checkbox" id="published" name="published" value="1" />
+        <label for="published" style="margin-bottom:0;">Publish immediately</label>
+      </div>
+    </div>
+
+    <button type="submit">Create Event</button>
+  </form>
+
+  <script>
+    const fileInput = document.getElementById('image_file');
+    const urlInput = document.getElementById('image_url');
+    if (fileInput && urlInput) {
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('image', file);
+        try {
+          const res = await fetch('/api/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.url) urlInput.value = data.url;
+          if (data.error) alert(data.error);
+        } catch (err) {
+          alert('Upload failed: ' + err.message);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
