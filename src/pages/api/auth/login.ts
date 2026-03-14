@@ -15,6 +15,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
+  if (!env?.DB) {
+    return new Response('D1 database binding not configured', { status: 500 });
+  }
   const db = getDB(env.DB);
   const sessionId = await createSession(db);
   const isDev = import.meta.env.DEV;

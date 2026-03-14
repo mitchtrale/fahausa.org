@@ -8,6 +8,7 @@ pages_build_output_dir = "dist"
 binding = "DB"
 database_name = "faha-db"
 database_id = "f5ddd6ff-d481-4b02-bfdf-168f5aafc63c"
+migrations_dir = "src/db/migrations"
 
 # R2 bucket — local dev uses automatic local storage via platformProxy
 # Production bucket created via: wrangler r2 bucket create faha-media
