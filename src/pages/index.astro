@@ -50,6 +50,8 @@ const poolHours = await md('pool_hours');
 const poolInfo = await md('pool_info');
 const eventRentals = await md('event_rentals');
 const overnightStays = await md('overnight_stays');
+
+const { version } = await import('../../package.json');
 ---
 
 <Layout>
@@ -686,6 +688,7 @@ const overnightStays = await md('overnight_stays');
         >Facebook</a>
         <a href="mailto:office@fahausa.org" aria-label="Email">Email</a>
       </div>
+      <span class="footer-version">v{version}</span>
     </div>
   </footer>
 </Layout>
