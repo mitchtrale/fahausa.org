@@ -1,3 +1,4 @@
+-- Mock site content for local development
 INSERT INTO site_content (section_key, label, content) VALUES
 ('membership_pricing', 'Membership Pricing', '## Annual Member Fees
 
@@ -79,14 +80,67 @@ Featuring 2 twin beds and full bathroom. *1 room sleeps 4, with bunk bed.*
 - **Members:** $100 / night
 - **Guests:** $150 / night
 
-## Upstairs Family Unit
-
-Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes, linens, and laundry facilities. Sleeps 6 (8 with sleeping bags). Includes sauna and pool access.
-
-- **$250 / night** *(Minimum 2 nights)*
-
 ## Camping
 
 Camp on the FAHA grounds. Contact the office to reserve your spot and confirm availability.
 
 - **$20 / night**');
+
+-- Mock upcoming events for local development
+-- Uses dates relative to "today" so they always appear as upcoming
+INSERT INTO events (title, description, date_start, time_start, time_end, location, ticket_price, published) VALUES
+('Sauna Saturday',
+ 'Open sauna day for members and guests. Towels not provided. Enjoy the authentic Finnish sauna experience followed by a refreshing dip in the pool.',
+ date('now', '+3 days'), '13:00', '19:00',
+ 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476',
+ 'Members free / Guests $20',
+ true),
+
+('Finnish Language Circle',
+ 'Casual conversation group for Finnish language learners at all levels. Native speakers welcome! Coffee and pulla provided.',
+ date('now', '+5 days'), '10:00', '11:30',
+ 'FAHA Library',
+ 'Free',
+ true),
+
+('Board Meeting',
+ 'Monthly FAHA Board of Directors meeting. Open to all members. New membership applications will be reviewed.',
+ date('now', '+10 days'), '18:00', '20:00',
+ 'FAHA Event Hall',
+ NULL,
+ true),
+
+('Midsummer Celebration (Juhannus)',
+ 'Join us for our annual Midsummer celebration! Traditional Finnish festivities including bonfire, music, dancing around the maypole, and a potluck dinner. Bring a dish to share.',
+ date('now', '+21 days'), '16:00', '22:00',
+ 'FAHA Grounds',
+ 'Members $10 / Guests $25',
+ true),
+
+('Pool Party & BBQ',
+ 'Summer pool party for the whole family. BBQ burgers, hot dogs, and veggie options provided. BYOB. Kids welcome — lifeguard on duty.',
+ date('now', '+28 days'), '12:00', '17:00',
+ 'FAHA Pool & Patio',
+ 'Members $5 / Guests $15',
+ true),
+
+('Finnish Film Night',
+ 'Screening of a classic Finnish film with English subtitles. Popcorn and refreshments provided. Discussion to follow.',
+ date('now', '+35 days'), '19:00', '21:30',
+ 'FAHA Event Hall',
+ 'Free',
+ true),
+
+('Craft Workshop: Traditional Finnish Weaving',
+ 'Learn the basics of traditional Finnish textile weaving. All materials provided. Beginners welcome. Space limited to 12 participants.',
+ date('now', '+42 days'), '10:00', '14:00',
+ 'FAHA Library',
+ '$15 materials fee',
+ true),
+
+('Annual General Meeting',
+ 'Annual meeting for all FAHA members. Board elections, financial review, and planning for the year ahead. Your voice matters — please attend!',
+ date('now', '+60 days'), '17:00', '19:00',
+ 'FAHA Event Hall',
+ NULL,
+ true);

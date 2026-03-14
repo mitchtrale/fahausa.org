@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const status = Astro.url.searchParams.get('status');
+
+const messages: Record<string, { title: string; text: string; color: string }> = {
+  success: {
+    title: 'You\'re subscribed!',
+    text: 'Thank you for confirming your subscription to the FAHA Newsletter. Watch your inbox for our next issue!',
+    color: '#2e7d32',
+  },
+  expired: {
+    title: 'Link expired',
+    text: 'This confirmation link has expired or has already been used. Please subscribe again from our homepage.',
+    color: '#c62828',
+  },
+  invalid: {
+    title: 'Invalid link',
+    text: 'This confirmation link is not valid. Please subscribe again from our homepage.',
+    color: '#c62828',
+  },
+  error: {
+    title: 'Something went wrong',
+    text: 'We encountered an error processing your subscription. Please try again later or contact us directly.',
+    color: '#c62828',
+  },
+};
+
+const msg = messages[status || ''] || messages.invalid;
+---
+
+<Layout title={`${msg.title} — FAHA`}>
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background-color:#F2F2F2;padding:2rem;">
+    <div style="max-width:480px;background:#fff;padding:2.5rem;text-align:center;font-family:Helvetica,Arial,sans-serif;">
+      <img
+        src="https://mcusercontent.com/36a8ff8dbf13061f9d722226f/images/f783e687-7e65-8df6-c6ac-f52ffec4f174.png"
+        alt="FAHA"
+        width="120"
+        style="display:block;margin:0 auto 1.5rem;"
+      />
+      <h1 style={`margin:0 0 1rem;font-size:1.5rem;color:${msg.color};`}>{msg.title}</h1>
+      <p style="color:#333;line-height:1.6;margin:0 0 1.5rem;">{msg.text}</p>
+      <a
+        href="/"
+        style="display:inline-block;padding:10px 24px;background:#333;color:#fff;text-decoration:none;font-size:14px;font-weight:bold;border-radius:4px;"
+      >
+        Back to FAHA
+      </a>
+    </div>
+  </div>
+</Layout>
