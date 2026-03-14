@@ -9,8 +9,11 @@ if (sessionId && db) {
   isAuthenticated = await validateSession(db, sessionId);
 }
 
+const redirectTo = Astro.url.searchParams.get('redirect') || '/admin/events';
+const safeRedirect = redirectTo.startsWith('/admin/') ? redirectTo : '/admin/events';
+
 if (isAuthenticated) {
-  return Astro.redirect('/admin/events');
+  return Astro.redirect(safeRedirect);
 }
 
 const error = Astro.url.searchParams.get('error');
@@ -56,6 +59,7 @@ const error = Astro.url.searchParams.get('error');
     {error === 'not_logged_in' && <p class="error">Please log in to continue.</p>}
     {error === 'no_db' && <p class="error">Database not available. Check your configuration.</p>}
     <form method="POST" action="/api/auth/login">
+      <input type="hidden" name="redirect" value={safeRedirect} />
       <label for="password">Password</label>
       <input type="password" id="password" name="password" autofocus required />
       <button type="submit">Log In</button>

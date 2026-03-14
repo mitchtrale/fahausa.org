@@ -1,5 +1,6 @@
 ---
 import { siteContent } from '../../../db/schema';
+import AdminNav from '../../../components/AdminNav.astro';
 
 const db = (Astro.locals as any).db;
 const sections = db
@@ -17,16 +18,7 @@ const saved = Astro.url.searchParams.get('saved');
   <link rel="stylesheet" href="/admin.css" />
 </head>
 <body>
-  <nav>
-    <strong>FAHA Admin</strong>
-    <a href="/admin/events">Events</a>
-    <a href="/admin/content">Content</a>
-    <a href="/admin/newsletter">Newsletter</a>
-    <span style="margin-left:auto;font-size:0.7rem;color:#aaa;">v0.2.0</span>
-    <form method="POST" action="/api/auth/logout" class="logout">
-      <button type="submit" class="btn-small btn-secondary">Logout</button>
-    </form>
-  </nav>
+  <AdminNav />
 
   <h1>Site Content</h1>
   <p style="color:#666;margin-bottom:1.5rem;">

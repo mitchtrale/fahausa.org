@@ -1,5 +1,6 @@
 ---
 import NewsletterEditor from '../../../components/NewsletterEditor.astro';
+import AdminNav from '../../../components/AdminNav.astro';
 
 const provider = Astro.url.searchParams.get('provider') || 'brevo';
 ---
@@ -15,16 +16,7 @@ const provider = Astro.url.searchParams.get('provider') || 'brevo';
   </style>
 </head>
 <body>
-  <nav>
-    <strong>FAHA Admin</strong>
-    <a href="/admin/events">Events</a>
-    <a href="/admin/content">Content</a>
-    <a href="/admin/newsletter">Newsletter</a>
-    <span style="margin-left:auto;font-size:0.7rem;color:#aaa;">v0.2.0</span>
-    <form method="POST" action="/api/auth/logout" class="logout">
-      <button type="submit" class="btn-small btn-secondary">Logout</button>
-    </form>
-  </nav>
+  <AdminNav />
 
   <h1>New Campaign <span style="font-size:0.7em;color:#888;text-transform:uppercase;">({provider})</span></h1>
   <a href="/admin/newsletter" style="font-size:0.9rem;">&larr; All Campaigns</a>

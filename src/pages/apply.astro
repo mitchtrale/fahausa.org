@@ -1,0 +1,373 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Apply for Membership — Finnish American Home Association" description="Apply to become a member of the Finnish American Home Association in Sonoma, CA.">
+  <!-- ── TOP BAR ──────────────────────────────────────────────────── -->
+  <header id="top-bar">
+    <div class="section-inner">
+      <h1>Finnish American Home Association</h1>
+    </div>
+  </header>
+
+  <!-- ── APPLICATION FORM ─────────────────────────────────────────── -->
+  <section id="apply" class="section-white">
+    <div class="section-inner apply-page">
+      <a href="/" class="apply-back">&larr; Back to FAHA</a>
+
+      <div class="apply-header">
+        <h2>Membership Application</h2>
+        <p>
+          FAHA welcomes all nationalities, orientations, and ethnicities. Membership privileges
+          include free use of the grounds, pool, and sauna on regular days, plus discounts on
+          events and facility rentals. Membership requires volunteer participation throughout
+          the year.
+        </p>
+      </div>
+
+      <form id="apply-form" class="apply-form" novalidate>
+        <!-- ── Section 1: Membership Type ─────────────────────── -->
+        <div class="apply-section">
+          <h3 class="apply-section-title">Membership Type</h3>
+          <div class="apply-radio-group">
+            <label class="apply-radio">
+              <input type="radio" name="membershipType" value="adult" required />
+              <span class="apply-radio-label">
+                <strong>Adult</strong>
+                <span class="apply-radio-detail">$300 initiation fee</span>
+              </span>
+            </label>
+            <label class="apply-radio">
+              <input type="radio" name="membershipType" value="student" />
+              <span class="apply-radio-label">
+                <strong>Student</strong>
+                <span class="apply-radio-detail">$100 initiation fee</span>
+              </span>
+            </label>
+            <label class="apply-radio">
+              <input type="radio" name="membershipType" value="family" />
+              <span class="apply-radio-label">
+                <strong>Family</strong>
+                <span class="apply-radio-detail">$500 initiation &mdash; 2 adults + children under 18</span>
+              </span>
+            </label>
+          </div>
+          <p class="apply-note">Annual maintenance fee of $80 per adult member, payable October 1st each year.</p>
+        </div>
+
+        <!-- ── Section 2: Personal Information ────────────────── -->
+        <div class="apply-section">
+          <h3 class="apply-section-title">Personal Information</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" required />
+            </div>
+            <div class="form-field">
+              <label for="middleName">Middle Name</label>
+              <input type="text" id="middleName" name="middleName" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" required />
+            </div>
+            <div class="form-field">
+              <label for="maidenName">Maiden Name</label>
+              <input type="text" id="maidenName" name="maidenName" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 3: Contact & Address ───────────────────── -->
+        <div class="apply-section">
+          <h3 class="apply-section-title">Contact & Address</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-field">
+              <label for="phone">Phone *</label>
+              <input type="tel" id="phone" name="phone" required />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="address">Mailing Address *</label>
+            <input type="text" id="address" name="address" required />
+          </div>
+          <div class="form-row form-row-3">
+            <div class="form-field">
+              <label for="city">City *</label>
+              <input type="text" id="city" name="city" required />
+            </div>
+            <div class="form-field">
+              <label for="state">State *</label>
+              <input type="text" id="state" name="state" required />
+            </div>
+            <div class="form-field">
+              <label for="zip">Zip *</label>
+              <input type="text" id="zip" name="zip" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 4: About You ───────────────────────────── -->
+        <div class="apply-section">
+          <h3 class="apply-section-title">About You</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="profession">Profession</label>
+              <input type="text" id="profession" name="profession" />
+            </div>
+            <div class="form-field">
+              <label>Age Group</label>
+              <div class="apply-age-group">
+                <label class="apply-age-option"><input type="radio" name="ageGroup" value="18-25" /> 18–25</label>
+                <label class="apply-age-option"><input type="radio" name="ageGroup" value="26-39" /> 26–39</label>
+                <label class="apply-age-option"><input type="radio" name="ageGroup" value="40-55" /> 40–55</label>
+                <label class="apply-age-option"><input type="radio" name="ageGroup" value="56-65" /> 56–65</label>
+                <label class="apply-age-option"><input type="radio" name="ageGroup" value="66+" /> 66+</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="finnishBackground">Finnish Background</label>
+            <textarea id="finnishBackground" name="finnishBackground" rows="3" placeholder="Please list any Finnish background. Being Finnish is not a requirement for joining FAHA."></textarea>
+          </div>
+          <div class="form-field">
+            <label for="howHeard">How did you hear about FAHA?</label>
+            <input type="text" id="howHeard" name="howHeard" />
+          </div>
+        </div>
+
+        <!-- ── Section 5: References ──────────────────────────── -->
+        <div class="apply-section">
+          <h3 class="apply-section-title">FAHA Member References</h3>
+          <p class="apply-note" style="margin-bottom: 1rem;">Please list two current FAHA members as references.</p>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="reference1Name">Reference 1 — Name *</label>
+              <input type="text" id="reference1Name" name="reference1Name" required />
+            </div>
+            <div class="form-field">
+              <label for="reference1Email">Reference 1 — Email *</label>
+              <input type="email" id="reference1Email" name="reference1Email" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="reference2Name">Reference 2 — Name *</label>
+              <input type="text" id="reference2Name" name="reference2Name" required />
+            </div>
+            <div class="form-field">
+              <label for="reference2Email">Reference 2 — Email *</label>
+              <input type="email" id="reference2Email" name="reference2Email" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 6: Family Members (conditional) ────────── -->
+        <div class="apply-section" id="family-section" style="display:none;">
+          <h3 class="apply-section-title">Family Members</h3>
+          <p class="apply-note" style="margin-bottom: 1rem;">Family membership covers your immediate household: 2 adults and children under 18.</p>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="spouseName">Spouse / Partner Name</label>
+              <input type="text" id="spouseName" name="spouseName" />
+            </div>
+            <div class="form-field">
+              <label for="childrenNames">Children's Names</label>
+              <textarea id="childrenNames" name="childrenNames" rows="3" placeholder="One name per line"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 7: Motivation & Volunteer Interests ────── -->
+        <div class="apply-section">
+          <h3 class="apply-section-title">Motivation & Volunteer Interests</h3>
+          <div class="form-field">
+            <label for="reasonForJoining">Reason for Joining FAHA *</label>
+            <textarea id="reasonForJoining" name="reasonForJoining" rows="4" required></textarea>
+          </div>
+          <div class="form-field">
+            <label>Volunteer Interests</label>
+            <p class="apply-note" style="margin-bottom: 0.75rem;">FAHA membership requires volunteer participation. Please check any activities you could participate in.</p>
+            <div class="apply-checkbox-grid">
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Finnish Holidays" /> Finnish Holidays (juhannus & pikkujoulu)</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Event Decorating" /> Event Decorating</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Library Assistance" /> Library Assistance</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Sauna Greeter" /> Sauna Greeter</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Baking/Cooking" /> Baking / Cooking</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Photographer" /> Photographer</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Cultural Committee" /> Cultural Committee</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Fundraising Committee" /> Fundraising Committee</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Ladies Groups" /> Ladies Groups</label>
+              <label class="apply-checkbox"><input type="checkbox" name="volunteerInterests" value="Board Member" /> Board Member</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Submit ─────────────────────────────────────────── -->
+        <div class="apply-submit">
+          <button type="submit" class="btn btn-dark" id="apply-btn">Submit Application</button>
+          <p id="apply-error" class="apply-error" style="display:none;"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer id="footer">
+    <div class="section-inner">
+      <span class="footer-name">Finnish American Home Association</span>
+      <div class="social-links">
+        <a href="https://www.instagram.com/sonomafaha" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a>
+        <a href="https://www.facebook.com/fahafinn/" target="_blank" rel="noopener" aria-label="Facebook">Facebook</a>
+        <a href="mailto:office@fahausa.org" aria-label="Email">Email</a>
+      </div>
+    </div>
+  </footer>
+</Layout>
+
+<script>
+  const STORAGE_KEY = 'faha_membership_application';
+  const form = document.getElementById('apply-form') as HTMLFormElement;
+  const btn = document.getElementById('apply-btn') as HTMLButtonElement;
+  const errorEl = document.getElementById('apply-error') as HTMLElement;
+  const familySection = document.getElementById('family-section') as HTMLElement;
+
+  // ── Family section toggle ──────────────────────────────────────
+  function updateFamilyVisibility() {
+    const selected = form.querySelector('input[name="membershipType"]:checked') as HTMLInputElement | null;
+    familySection.style.display = selected?.value === 'family' ? '' : 'none';
+  }
+  form.querySelectorAll('input[name="membershipType"]').forEach(r =>
+    r.addEventListener('change', updateFamilyVisibility)
+  );
+
+  // ── localStorage persistence ───────────────────────────────────
+  function collectFormData(): Record<string, any> {
+    const data: Record<string, any> = {};
+    // Text / email / tel inputs and textareas
+    form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(el => {
+      if (el.name) data[el.name] = el.value;
+    });
+    // Radio buttons
+    form.querySelectorAll<HTMLInputElement>('input[type="radio"]:checked').forEach(el => {
+      data[el.name] = el.value;
+    });
+    // Checkboxes
+    const checked: string[] = [];
+    form.querySelectorAll<HTMLInputElement>('input[name="volunteerInterests"]:checked').forEach(el => {
+      checked.push(el.value);
+    });
+    data.volunteerInterests = checked;
+    return data;
+  }
+
+  function restoreFormData() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const data = JSON.parse(saved);
+
+      // Text fields
+      for (const [key, val] of Object.entries(data)) {
+        if (key === 'volunteerInterests') continue;
+        const el = form.querySelector(`[name="${key}"]`);
+        if (!el) continue;
+        if (el instanceof HTMLInputElement && (el.type === 'radio')) {
+          const radio = form.querySelector(`input[name="${key}"][value="${val}"]`) as HTMLInputElement | null;
+          if (radio) radio.checked = true;
+        } else if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+          el.value = val as string;
+        }
+      }
+
+      // Checkboxes
+      if (Array.isArray(data.volunteerInterests)) {
+        form.querySelectorAll<HTMLInputElement>('input[name="volunteerInterests"]').forEach(el => {
+          el.checked = data.volunteerInterests.includes(el.value);
+        });
+      }
+
+      updateFamilyVisibility();
+    } catch {}
+  }
+
+  let saveTimer: ReturnType<typeof setTimeout>;
+  function debouncedSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectFormData()));
+      } catch {}
+    }, 500);
+  }
+
+  form.addEventListener('input', debouncedSave);
+  form.addEventListener('change', debouncedSave);
+  window.addEventListener('beforeunload', () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectFormData()));
+    } catch {}
+  });
+
+  restoreFormData();
+
+  // ── Form submission ────────────────────────────────────────────
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.style.display = 'none';
+
+    // Validate required fields client-side
+    const data = collectFormData();
+    const required = ['membershipType', 'firstName', 'lastName', 'email', 'phone', 'address', 'city', 'state', 'zip', 'reference1Name', 'reference1Email', 'reference2Name', 'reference2Email', 'reasonForJoining'];
+    const missing = required.filter(f => !data[f]?.toString().trim());
+    if (missing.length > 0) {
+      // Focus the first missing field
+      const firstMissing = form.querySelector(`[name="${missing[0]}"]`) as HTMLElement;
+      if (firstMissing) {
+        firstMissing.focus();
+        firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      errorEl.textContent = 'Please fill in all required fields marked with *.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      const res = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        localStorage.removeItem(STORAGE_KEY);
+        window.location.href = '/apply/thank-you';
+      } else {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Something went wrong');
+      }
+    } catch (err: any) {
+      errorEl.textContent = err.message || 'Sorry, something went wrong. Please try again.';
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Submit Application';
+    }
+  });
+
+  // ── Fade-in animations ─────────────────────────────────────────
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>

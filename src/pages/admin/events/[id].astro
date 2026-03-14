@@ -1,6 +1,7 @@
 ---
 import { eq } from 'drizzle-orm';
 import { events, eventRecurrence, eventOccurrences } from '../../../db/schema';
+import AdminNav from '../../../components/AdminNav.astro';
 
 const db = (Astro.locals as any).db;
 const id = Number(Astro.params.id);
@@ -33,16 +34,7 @@ const generated = Astro.url.searchParams.get('generated');
   <link rel="stylesheet" href="/admin.css" />
 </head>
 <body>
-  <nav>
-    <strong>FAHA Admin</strong>
-    <a href="/admin/events">Events</a>
-    <a href="/admin/content">Content</a>
-    <a href="/admin/newsletter">Newsletter</a>
-    <span style="margin-left:auto;font-size:0.7rem;color:#aaa;">v0.2.0</span>
-    <form method="POST" action="/api/auth/logout" class="logout">
-      <button type="submit" class="btn-small btn-secondary">Logout</button>
-    </form>
-  </nav>
+  <AdminNav />
 
   <h1>Edit Event</h1>
   <a href="/admin/events" style="font-size:0.9rem;">&larr; Back to events</a>
