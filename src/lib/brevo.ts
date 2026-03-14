@@ -98,3 +98,40 @@ export async function updateCampaign(
     body: JSON.stringify(body),
   });
 }
+
+// --- Transactional Email ---
+
+export interface TransactionalEmailOptions {
+  to: { email: string; name?: string }[];
+  subject: string;
+  htmlContent: string;
+  textContent?: string;
+  replyTo?: { email: string; name?: string };
+  params?: Record<string, string>;
+  tags?: string[];
+}
+
+export interface TransactionalEmailResponse {
+  messageId: string;
+}
+
+export async function sendTransactionalEmail(
+  options: TransactionalEmailOptions,
+): Promise<TransactionalEmailResponse> {
+  const body: Record<string, any> = {
+    sender: getSender(),
+    to: options.to,
+    subject: options.subject,
+    htmlContent: options.htmlContent,
+  };
+
+  if (options.textContent) body.textContent = options.textContent;
+  if (options.replyTo) body.replyTo = options.replyTo;
+  if (options.params) body.params = options.params;
+  if (options.tags) body.tags = options.tags;
+
+  return brevo('/smtp/email', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+}

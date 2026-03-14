@@ -457,6 +457,11 @@ p:last-child { margin-bottom: 0; }
   letter-spacing: 0.2rem;
   text-transform: uppercase;
 }
+.footer-version {
+  font-size: 0.6em;
+  opacity: 0.25;
+  letter-spacing: 0.05em;
+}
 .social-links { display: flex; gap: 1.25rem; align-items: center; }
 .social-links a {
   font-size: 0.8em;

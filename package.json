@@ -12,6 +12,7 @@
     "db:seed:local": "wrangler d1 execute faha-db --local --file=src/db/seed.sql",
     "db:migrate:prod": "wrangler d1 execute faha-db --remote --file=src/db/migrations/0000_slimy_supreme_intelligence.sql",
     "db:seed:prod": "wrangler d1 execute faha-db --remote --file=src/db/seed.sql",
+    "db:bootstrap": "bash scripts/db-bootstrap.sh",
     "db:reset:local": "rm -rf .wrangler/state && npm run db:migrate:local && npm run db:seed:local",
     "deploy": "npm run build && wrangler pages deploy dist"
   },
