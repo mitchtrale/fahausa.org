@@ -28,8 +28,11 @@ button:hover, .btn:hover { background: #333; }
 .btn-danger:hover { background: #990000; }
 .btn-secondary { background: #666; }
 .btn-secondary:hover { background: #555; }
+.btn-blue { background: #0066cc; color: #fff; }
+.btn-blue:hover { background: #0052a3; }
 .btn-small { padding: 0.3rem 0.75rem; font-size: 0.8rem; }
-.actions { display: flex; gap: 0.5rem; }
+.actions { display: flex; gap: 0.5rem; align-items: center; }
+.actions form { display: flex; }
 .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; font-weight: 600; }
 .badge-green { background: #d4edda; color: #155724; }
 .badge-gray { background: #e9ecef; color: #495057; }

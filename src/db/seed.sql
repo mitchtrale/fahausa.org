@@ -90,3 +90,9 @@ Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes, linens, and laun
 Camp on the FAHA grounds. Contact the office to reserve your spot and confirm availability.
 
 - **$20 / night**');
+
+-- Seed sample events
+INSERT INTO events (title, slug, description, date_start, time_start, time_end, location, image_url, ticket_price, published) VALUES
+('Juhannus – Midsummer Celebration', 'juhannus-midsummer-celebration-2026', 'Join us for our annual Midsummer festival featuring a traditional bonfire, Finnish folk music, dancing around the maypole, and a potluck dinner under the longest day of the year.', '2026-06-20', '2:00 PM', '10:00 PM', 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476', '/assets/images/container01.jpg', '$25 Members / $40 Guests', 1),
+('Sauna & Swim Social', 'sauna-swim-social-2026', 'A casual evening for members and guests to enjoy the saunas and pool together. Light refreshments provided.', '2026-05-09', '4:00 PM', '8:00 PM', 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476', '/assets/images/container05.jpg', 'Free for Members', 1),
+('Finnish Language Workshop', 'finnish-language-workshop-2026', 'Learn everyday Finnish phrases and explore the beauty of the Finnish language in this beginner-friendly workshop led by native speakers.', '2026-04-26', '10:00 AM', '12:00 PM', 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476', '/assets/images/container06.jpg', '$15', 1);

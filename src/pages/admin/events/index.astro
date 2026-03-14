@@ -61,6 +61,7 @@ const deleted = Astro.url.searchParams.get('deleted');
             }
           </td>
           <td class="actions">
+            {event.slug && <a href={`/events/${event.slug}`} class="btn btn-small btn-blue" target="_blank" rel="noopener">View</a>}
             <a href={`/admin/events/${event.id}`} class="btn btn-small">Edit</a>
             <form method="POST" action={`/api/events/${event.id}`} style="display:inline;">
               <input type="hidden" name="_method" value="DELETE" />
@@ -126,6 +127,13 @@ const deleted = Astro.url.searchParams.get('deleted');
     </div>
 
     <div class="form-group">
+      <label for="slug">URL Slug</label>
+      <input type="text" id="slug" name="slug" placeholder="Auto-generated from title" />
+      <small style="color:#888;">Leave blank to auto-generate. Used for the event page URL: /events/your-slug</small>
+      <div id="slug-warning" style="display:none;color:#c62828;font-size:0.85rem;margin-top:0.25rem;"></div>
+    </div>
+
+    <div class="form-group">
       <label for="image_url">Image URL</label>
       <input type="text" id="image_url" name="image_url" placeholder="Paste URL or upload below" />
       <input type="file" id="image_file" accept="image/jpeg,image/png,image/webp" style="margin-top:0.5rem;" />
@@ -160,6 +168,48 @@ const deleted = Astro.url.searchParams.get('deleted');
         }
       });
     }
+
+    // Slug auto-generation and duplicate checking
+    const slugInput = document.getElementById('slug');
+    const titleInput = document.getElementById('title');
+    const dateInput = document.getElementById('date_start');
+    const slugWarning = document.getElementById('slug-warning');
+    let slugManuallyEdited = false;
+
+    function generateSlug(title, dateStart) {
+      const base = title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const year = (dateStart || '').slice(0, 4);
+      return year ? `${base}-${year}` : base;
+    }
+
+    function updateSlugPreview() {
+      if (slugManuallyEdited) return;
+      const title = titleInput?.value || '';
+      const date = dateInput?.value || '';
+      if (title) slugInput.value = generateSlug(title, date);
+    }
+
+    slugInput?.addEventListener('input', () => { slugManuallyEdited = slugInput.value.length > 0; });
+    titleInput?.addEventListener('input', updateSlugPreview);
+    dateInput?.addEventListener('change', updateSlugPreview);
+
+    let checkTimer;
+    slugInput?.addEventListener('input', () => {
+      clearTimeout(checkTimer);
+      const slug = slugInput.value.trim();
+      if (!slug) { slugWarning.style.display = 'none'; return; }
+      checkTimer = setTimeout(async () => {
+        const res = await fetch(`/api/events/check-slug?slug=${encodeURIComponent(slug)}`);
+        const { taken } = await res.json();
+        if (taken) {
+          slugWarning.textContent = 'This slug is already in use by another event.';
+          slugWarning.style.display = 'block';
+        } else {
+          slugWarning.style.display = 'none';
+        }
+      }, 400);
+    });
   </script>
 </body>
 </html>
