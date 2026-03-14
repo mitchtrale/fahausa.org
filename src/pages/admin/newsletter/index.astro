@@ -1,0 +1,155 @@
+---
+import { listCampaigns } from '../../../lib/mailchimp';
+
+let campaigns: any[] = [];
+let error = '';
+
+try {
+  const result = await listCampaigns();
+  campaigns = result.campaigns;
+} catch (err: any) {
+  error = err.message;
+}
+
+function statusBadge(status: string): string {
+  const colors: Record<string, string> = {
+    save: '#888',
+    draft: '#888',
+    paused: '#e67e22',
+    schedule: '#3498db',
+    sending: '#f39c12',
+    sent: '#27ae60',
+  };
+  const color = colors[status] || '#888';
+  return `background:${color};color:#fff;padding:2px 8px;border-radius:3px;font-size:0.75rem;text-transform:uppercase;`;
+}
+
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  });
+}
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Newsletter Admin - FAHA</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+    .topbar {
+      background: #147FB0;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar h1 { font-size: 1.125rem; font-weight: 600; }
+    .topbar a { color: #fff; text-decoration: none; font-size: 0.875rem; opacity: 0.85; }
+    .topbar a:hover { opacity: 1; }
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .actions h2 { font-size: 1.25rem; }
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #147FB0;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover { background: #0f6a94; }
+    .campaign-list { list-style: none; }
+    .campaign-item {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .campaign-info { flex: 1; min-width: 0; }
+    .campaign-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .campaign-meta { font-size: 0.8rem; color: #888; margin-top: 0.25rem; }
+    .campaign-actions { display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0; }
+    .btn-sm {
+      padding: 0.3rem 0.75rem;
+      font-size: 0.8rem;
+      border-radius: 3px;
+      text-decoration: none;
+      color: #fff;
+      background: #555;
+    }
+    .btn-sm:hover { background: #333; }
+    .btn-edit { background: #147FB0; }
+    .btn-edit:hover { background: #0f6a94; }
+    .error-msg { background: #fce4e4; color: #c0392b; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+    .empty { text-align: center; color: #888; padding: 3rem 1rem; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>FAHA Newsletter Admin</h1>
+    <a href="/">Back to site</a>
+  </div>
+
+  <div class="container">
+    {error && <div class="error-msg">{error}</div>}
+
+    <div class="actions">
+      <h2>Campaigns</h2>
+      <a href="/admin/newsletter/new" class="btn">New Campaign</a>
+    </div>
+
+    {campaigns.length === 0 && !error && (
+      <div class="empty">
+        <p>No campaigns yet.</p>
+        <p style="margin-top:0.5rem;"><a href="/admin/newsletter/new" class="btn">Create your first campaign</a></p>
+      </div>
+    )}
+
+    <ul class="campaign-list">
+      {campaigns.map((c) => (
+        <li class="campaign-item">
+          <div class="campaign-info">
+            <div class="campaign-title">{c.settings.title || c.settings.subject_line || '(Untitled)'}</div>
+            <div class="campaign-meta">
+              <span style={statusBadge(c.status)}>{c.status}</span>
+              <span style="margin-left:0.5rem;">
+                {c.send_time ? `Sent ${formatDate(c.send_time)}` : `Created ${formatDate(c.create_time)}`}
+              </span>
+            </div>
+          </div>
+          <div class="campaign-actions">
+            {(c.status === 'save' || c.status === 'draft') && (
+              <a href={`/admin/newsletter/${c.id}`} class="btn-sm btn-edit">Edit</a>
+            )}
+            <a href={`https://us7.admin.mailchimp.com/campaigns/edit?id=${c.web_id}`} target="_blank" rel="noopener" class="btn-sm">Mailchimp</a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</body>
+</html>

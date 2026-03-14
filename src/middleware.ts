@@ -16,7 +16,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Protect admin sub-routes (but NOT /admin itself — that's the login page)
   const isProtectedAdmin =
     url.pathname.startsWith('/admin/events') ||
-    url.pathname.startsWith('/admin/content');
+    url.pathname.startsWith('/admin/content') ||
+    url.pathname.startsWith('/admin/newsletter');
 
   // Protect API routes (except login)
   const isProtectedApi =

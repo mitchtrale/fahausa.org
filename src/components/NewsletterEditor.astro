@@ -1,0 +1,637 @@
+---
+import { prebuiltSections } from '../lib/prebuiltSections';
+import { getDefaultTitle } from '../lib/emailTemplate';
+
+export interface Props {
+  mode: 'new' | 'edit';
+  campaignId?: string;
+  initialTitle?: string;
+  initialSubject?: string;
+  initialPreview?: string;
+  webId?: number;
+}
+
+const {
+  mode,
+  campaignId,
+  initialTitle = getDefaultTitle(),
+  initialSubject = `FAHA ${getDefaultTitle()}`,
+  initialPreview = '',
+  webId,
+} = Astro.props;
+---
+
+<!-- Campaign settings -->
+<div class="ed-card">
+  <h2 class="ed-card-title">Campaign Settings</h2>
+  <div class="ed-field">
+    <label for="title">Newsletter Title</label>
+    <input type="text" id="title" value={initialTitle} placeholder="March 2026 Newsletter" />
+  </div>
+  <div class="ed-field">
+    <label for="subject">Email Subject Line</label>
+    <input type="text" id="subject" value={initialSubject} placeholder="FAHA March 2026 Newsletter" />
+  </div>
+  <div class="ed-field">
+    <label for="preview">Preview Text</label>
+    <input type="text" id="preview" value={initialPreview} placeholder="A short summary shown in email clients..." />
+  </div>
+  {webId && (
+    <a class="ed-mc-link" href={`https://us7.admin.mailchimp.com/campaigns/edit?id=${webId}`} target="_blank" rel="noopener">
+      Open in Mailchimp &rarr;
+    </a>
+  )}
+</div>
+
+<!-- Prebuilt section picker -->
+<div class="ed-card">
+  <h2 class="ed-card-title">Quick Add</h2>
+  <p class="ed-hint">Click to add a prebuilt section, then edit its content below.</p>
+  <div class="ed-prebuilt-grid">
+    {prebuiltSections.map((ps, i) => (
+      <button type="button" class="ed-prebuilt-btn" data-prebuilt-index={i}>
+        <span class="ed-prebuilt-icon">{ps.label === 'Empty Section' ? '+' : ps.label.charAt(0)}</span>
+        <span class="ed-prebuilt-text">
+          <strong>{ps.label}</strong>
+          <span>{ps.description}</span>
+        </span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<!-- Content sections -->
+<div class="ed-card">
+  <div class="ed-sections-head">
+    <h2 class="ed-card-title" style="margin:0;">Sections</h2>
+    <span id="section-count" class="ed-section-count">0 sections</span>
+  </div>
+  <div id="sections-container" class="ed-sections-list"></div>
+  <div class="ed-sections-empty" id="sections-empty">
+    <p>No sections yet. Use Quick Add above to get started.</p>
+  </div>
+</div>
+
+<!-- Actions -->
+<div class="ed-actions">
+  <button type="button" class="ed-btn ed-btn-primary" id="save-btn">
+    {mode === 'new' ? 'Save as Draft in Mailchimp' : 'Update Draft'}
+  </button>
+  <button type="button" class="ed-btn ed-btn-secondary" id="preview-btn">Preview</button>
+  <span id="status-msg" class="ed-status"></span>
+</div>
+
+<!-- Preview -->
+<div class="ed-card" id="preview-card" style="display:none;margin-top:1rem;">
+  <h2 class="ed-card-title">Preview</h2>
+  <iframe id="preview-frame" class="ed-preview-frame" sandbox="allow-same-origin"></iframe>
+</div>
+
+<style is:global>
+  /* ── Card & Layout ─────────────────────────────────── */
+  .ed-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .ed-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── Form Fields ───────────────────────────────────── */
+  .ed-field { margin-bottom: 0.875rem; }
+  .ed-field:last-child { margin-bottom: 0; }
+  .ed-field label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ed-field input[type="text"],
+  .ed-field input[type="url"],
+  .ed-field textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #d4d4d4;
+    border-radius: 6px;
+    font-size: 0.925rem;
+    font-family: inherit;
+    background: #fafafa;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  }
+  .ed-field input:focus,
+  .ed-field textarea:focus {
+    outline: none;
+    border-color: #147FB0;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(20,127,176,0.1);
+  }
+  .ed-field textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .ed-mc-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: #147FB0;
+    text-decoration: none;
+  }
+  .ed-mc-link:hover { text-decoration: underline; }
+  .ed-hint { font-size: 0.825rem; color: #888; margin-bottom: 0.75rem; margin-top: -0.5rem; }
+
+  /* ── Prebuilt Picker ───────────────────────────────── */
+  .ed-prebuilt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.5rem;
+  }
+  .ed-prebuilt-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 0.75rem;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .ed-prebuilt-btn:hover {
+    border-color: #147FB0;
+    background: #f0f8ff;
+    box-shadow: 0 1px 4px rgba(20,127,176,0.1);
+  }
+  .ed-prebuilt-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #e8f4f8;
+    color: #147FB0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .ed-prebuilt-text { display: flex; flex-direction: column; min-width: 0; }
+  .ed-prebuilt-text strong { font-size: 0.825rem; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ed-prebuilt-text span { font-size: 0.7rem; color: #999; line-height: 1.3; }
+
+  /* ── Sections List ─────────────────────────────────── */
+  .ed-sections-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .ed-section-count {
+    font-size: 0.8rem;
+    color: #999;
+    background: #f0f0f0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+  }
+  .ed-sections-list { }
+  .ed-sections-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  .ed-sections-empty p { margin: 0; }
+
+  /* ── Section Card ──────────────────────────────────── */
+  .ed-sec {
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+    margin-bottom: 0;
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .ed-sec:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .ed-sec-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    margin: 0;
+  }
+  .ed-sec-divider::before,
+  .ed-sec-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #c8c8c8, transparent);
+  }
+  .ed-sec-divider span {
+    font-size: 0.65rem;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .ed-sec-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    cursor: grab;
+    user-select: none;
+  }
+  .ed-sec-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    background: #147FB0;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ed-sec-label {
+    flex: 1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ed-sec-controls {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .ed-sec-ctrl {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0.2rem 0.35rem;
+    font-size: 0.75rem;
+    color: #888;
+    line-height: 1;
+    transition: all 0.1s;
+  }
+  .ed-sec-ctrl:hover {
+    background: #fff;
+    border-color: #ddd;
+    color: #333;
+  }
+  .ed-sec-ctrl--remove:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+  }
+  .ed-sec-body {
+    padding: 1rem;
+  }
+  .ed-sec-body .ed-field { margin-bottom: 0.75rem; }
+  .ed-sec-body .ed-field:last-child { margin-bottom: 0; }
+  .ed-sec-img-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .ed-sec-img-row .ed-field { flex: 1; }
+  .ed-sec-img-preview {
+    width: 80px;
+    height: 56px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #f0f0f0;
+    border: 1px solid #e0e0e0;
+    flex-shrink: 0;
+    display: none;
+  }
+  .ed-sec-img-preview.visible { display: block; }
+  .ed-sec-body .ed-field input,
+  .ed-sec-body .ed-field textarea {
+    background: #fff;
+  }
+
+  /* ── Action Buttons ────────────────────────────────── */
+  .ed-actions {
+    display: flex;
+    gap: 0.625rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+  .ed-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ed-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ed-btn-primary { background: #147FB0; color: #fff; }
+  .ed-btn-primary:hover:not(:disabled) { background: #0f6a94; }
+  .ed-btn-secondary {
+    background: #fff;
+    color: #147FB0;
+    border: 1px solid #147FB0;
+  }
+  .ed-btn-secondary:hover:not(:disabled) { background: #f0f8ff; }
+  .ed-status { font-size: 0.85rem; }
+  .ed-status.success { color: #16a34a; }
+  .ed-status.error { color: #dc2626; }
+
+  /* ── Preview ───────────────────────────────────────── */
+  .ed-preview-frame {
+    border: 1px solid #e4e4e4;
+    border-radius: 6px;
+    width: 100%;
+    min-height: 500px;
+    background: #fafafa;
+  }
+</style>
+
+<script is:inline define:vars={{
+  editorMode: mode,
+  editorCampaignId: campaignId || '',
+  prebuiltSectionsJson: JSON.stringify(prebuiltSections),
+}}>
+  const PREBUILT = JSON.parse(prebuiltSectionsJson);
+  const sectionsContainer = document.getElementById('sections-container');
+  const sectionsEmpty = document.getElementById('sections-empty');
+  const saveBtn = document.getElementById('save-btn');
+  const previewBtn = document.getElementById('preview-btn');
+  const statusMsg = document.getElementById('status-msg');
+  const sectionCountEl = document.getElementById('section-count');
+
+  function escAttr(s) {
+    return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function updateUI() {
+    // Remove existing dividers
+    sectionsContainer.querySelectorAll('.ed-sec-divider').forEach(d => d.remove());
+
+    const cards = sectionsContainer.querySelectorAll('.ed-sec');
+    const n = cards.length;
+    sectionCountEl.textContent = n === 1 ? '1 section' : `${n} sections`;
+    sectionsEmpty.style.display = n === 0 ? 'block' : 'none';
+
+    cards.forEach((card, i) => {
+      card.querySelector('.ed-sec-num').textContent = i + 1;
+      const headerInput = card.querySelector('.sec-header');
+      const label = card.querySelector('.ed-sec-label');
+      label.textContent = headerInput.value || 'Untitled section';
+
+      // Insert divider between sections (not after the last one)
+      if (i < n - 1) {
+        const divider = document.createElement('div');
+        divider.className = 'ed-sec-divider';
+        divider.innerHTML = '<span>divider</span>';
+        card.after(divider);
+      }
+    });
+  }
+
+  function createSectionEl(data) {
+    const div = document.createElement('div');
+    div.className = 'ed-sec';
+    const headerVal = data?.header || '';
+    const subVal = data?.subheader || '';
+    const imgVal = data?.imageUrl || '';
+    const bodyVal = data?.body || '';
+
+    div.innerHTML = `
+      <div class="ed-sec-bar">
+        <span class="ed-sec-num">0</span>
+        <span class="ed-sec-label">${escAttr(headerVal) || 'Untitled section'}</span>
+        <div class="ed-sec-controls">
+          <button type="button" class="ed-sec-ctrl" data-action="up" title="Move up">&#9650;</button>
+          <button type="button" class="ed-sec-ctrl" data-action="down" title="Move down">&#9660;</button>
+          <button type="button" class="ed-sec-ctrl ed-sec-ctrl--remove" data-action="remove" title="Remove section">&#10005;</button>
+        </div>
+      </div>
+      <div class="ed-sec-body">
+        <div class="ed-sec-img-row">
+          <div class="ed-field">
+            <label>Image URL</label>
+            <input type="url" class="sec-image" placeholder="https://mcusercontent.com/..." value="${escAttr(imgVal)}" />
+          </div>
+          <img class="ed-sec-img-preview ${imgVal ? 'visible' : ''}" ${imgVal ? `src="${escAttr(imgVal)}"` : ''} />
+        </div>
+        <div class="ed-field">
+          <label>Header</label>
+          <input type="text" class="sec-header" placeholder="Section Title" value="${escAttr(headerVal)}" />
+        </div>
+        <div class="ed-field">
+          <label>Subheader</label>
+          <input type="text" class="sec-subheader" placeholder="Date, subtitle, etc." value="${escAttr(subVal)}" />
+        </div>
+        <div class="ed-field">
+          <label>Body <span style="font-weight:400;color:#aaa;text-transform:none;letter-spacing:0;">(HTML OK)</span></label>
+          <textarea class="sec-body" placeholder="Section content...">${bodyVal}</textarea>
+        </div>
+      </div>
+    `;
+
+    // Wire up events on this card
+    const bar = div.querySelector('.ed-sec-controls');
+    bar.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      if (action === 'remove') {
+        div.remove();
+        updateUI();
+      } else if (action === 'up') {
+        const prev = div.previousElementSibling;
+        if (prev && prev.classList.contains('ed-sec')) {
+          sectionsContainer.insertBefore(div, prev);
+          updateUI();
+        }
+      } else if (action === 'down') {
+        const next = div.nextElementSibling;
+        if (next && next.classList.contains('ed-sec')) {
+          sectionsContainer.insertBefore(next, div);
+          updateUI();
+        }
+      }
+    });
+
+    // Live-update the bar label when header changes
+    const headerInput = div.querySelector('.sec-header');
+    headerInput.addEventListener('input', () => {
+      div.querySelector('.ed-sec-label').textContent = headerInput.value || 'Untitled section';
+    });
+
+    // Image preview
+    const imgInput = div.querySelector('.sec-image');
+    const imgPreview = div.querySelector('.ed-sec-img-preview');
+    imgInput.addEventListener('input', () => {
+      if (imgInput.value) {
+        imgPreview.src = imgInput.value;
+        imgPreview.classList.add('visible');
+        imgPreview.onerror = () => imgPreview.classList.remove('visible');
+      } else {
+        imgPreview.classList.remove('visible');
+      }
+    });
+
+    sectionsContainer.appendChild(div);
+    updateUI();
+    return div;
+  }
+
+  // Prebuilt section buttons
+  document.querySelectorAll('.ed-prebuilt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.prebuiltIndex, 10);
+      const el = createSectionEl(PREBUILT[idx]);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+
+  function gatherData() {
+    const sections = [];
+    document.querySelectorAll('.ed-sec').forEach(card => {
+      sections.push({
+        imageUrl: card.querySelector('.sec-image').value,
+        header: card.querySelector('.sec-header').value,
+        subheader: card.querySelector('.sec-subheader').value,
+        body: card.querySelector('.sec-body').value,
+      });
+    });
+    return {
+      title: document.getElementById('title').value,
+      subjectLine: document.getElementById('subject').value,
+      previewText: document.getElementById('preview').value,
+      sections,
+    };
+  }
+
+  saveBtn.addEventListener('click', async () => {
+    const data = gatherData();
+    if (data.sections.length === 0) {
+      statusMsg.textContent = 'Add at least one section first.';
+      statusMsg.className = 'ed-status error';
+      return;
+    }
+
+    saveBtn.disabled = true;
+    statusMsg.textContent = 'Saving...';
+    statusMsg.className = 'ed-status';
+
+    try {
+      let url, method;
+      if (editorMode === 'new') {
+        url = '/api/mailchimp/campaigns';
+        method = 'POST';
+      } else {
+        url = `/api/mailchimp/campaigns/${editorCampaignId}`;
+        method = 'PATCH';
+      }
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to save');
+
+      statusMsg.textContent = editorMode === 'new' ? 'Draft created!' : 'Draft updated!';
+      statusMsg.className = 'ed-status success';
+
+      if (editorMode === 'new') {
+        setTimeout(() => { window.location.href = `/admin/newsletter/${result.id}`; }, 1000);
+      } else {
+        saveBtn.disabled = false;
+      }
+    } catch (err) {
+      statusMsg.textContent = err.message;
+      statusMsg.className = 'ed-status error';
+      saveBtn.disabled = false;
+    }
+  });
+
+  previewBtn.addEventListener('click', () => {
+    const data = gatherData();
+    const previewCard = document.getElementById('preview-card');
+    const frame = document.getElementById('preview-frame');
+
+    function slugify(str) {
+      return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    const tocHtml = data.sections
+      .filter(s => s.header)
+      .map(s => `<a href="#${slugify(s.header)}" style="color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.4);">${s.header}</a>`)
+      .join('<br>');
+
+    const sectionsHtml = data.sections.map((s, i) => `
+      <div>
+        ${s.imageUrl ? `<div style="padding:0 20px;"><a id="${slugify(s.header)}" style="display:block;height:0;overflow:hidden;"></a><img src="${s.imageUrl}" style="width:100%;max-width:560px;height:auto;display:block;" /></div>` : `<a id="${slugify(s.header)}" style="display:block;height:0;overflow:hidden;"></a>`}
+        <div style="padding:16px 20px 0;">
+          <h2 style="margin:0;font-size:20px;font-weight:bold;color:#000;">${s.header}</h2>
+        </div>
+        ${s.subheader ? `<div style="padding:6px 20px 0;"><h3 style="margin:0;font-size:16px;font-weight:bold;color:#000;">${s.subheader}</h3></div>` : ''}
+        <div style="padding:12px 20px 0;font-size:15px;line-height:1.5;color:#333;">
+          ${s.body}
+        </div>
+        ${i < data.sections.length - 1 ? '<hr style="border:none;border-top:2px solid #9E9999;margin:24px 20px;">' : ''}
+      </div>
+    `).join('');
+
+    const html = `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;padding:20px 10px;font-family:Helvetica,Arial,sans-serif;background:#F2F2F2;}a{color:#147FB0;}</style></head><body>
+      <div style="max-width:600px;margin:0 auto;background:#fff;">
+        <div style="text-align:center;padding:24px 20px 16px;">
+          <img src="https://mcusercontent.com/36a8ff8dbf13061f9d722226f/images/f783e687-7e65-8df6-c6ac-f52ffec4f174.png" width="150" style="height:auto;" />
+        </div>
+        <div style="margin:0 20px 20px;background:#147FB0;border-radius:4px;padding:20px 24px 16px;color:#fff;">
+          <div style="font-size:18px;font-weight:bold;line-height:1.4;">${data.title}</div>
+          ${tocHtml ? `
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.3);margin:12px 0;">
+          <div style="font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.7);margin-bottom:4px;">In This Issue</div>
+          <div style="font-size:14px;font-weight:bold;line-height:1.7;">${tocHtml}</div>
+          ` : ''}
+        </div>
+        ${sectionsHtml}
+        <div style="background:#F2F2F2;padding:20px;text-align:center;margin-top:24px;border-top:2px solid #9E9999;">
+          <img src="https://mcusercontent.com/36a8ff8dbf13061f9d722226f/images/3f82535d-6946-55f7-d8e7-1649f8debfab.jpg" width="200" style="height:auto;display:block;margin:0 auto 16px;" />
+          <div style="font-size:11px;color:#606060;line-height:1.4;">
+            <em>Copyright &copy; ${new Date().getFullYear()} Finnish American Home Association. All rights reserved.</em><br><br>
+            <strong>Finnish American Home Association</strong><br>197 W Verano Ave, Sonoma, CA 95476
+          </div>
+        </div>
+      </div>
+    </body></html>`;
+
+    frame.srcdoc = html;
+    previewCard.style.display = 'block';
+    previewCard.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  updateUI();
+</script>
