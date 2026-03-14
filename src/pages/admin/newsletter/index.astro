@@ -1,6 +1,7 @@
 ---
 import { listCampaigns as listMailchimpCampaigns } from '../../../lib/mailchimp';
 import { listCampaigns as listBrevoCampaigns } from '../../../lib/brevo';
+import AdminNav from '../../../components/AdminNav.astro';
 
 let mcCampaigns: any[] = [];
 let brevoCampaigns: any[] = [];
@@ -109,16 +110,7 @@ function formatDate(dateStr: string | null | undefined): string {
   </style>
 </head>
 <body>
-  <nav>
-    <strong>FAHA Admin</strong>
-    <a href="/admin/events">Events</a>
-    <a href="/admin/content">Content</a>
-    <a href="/admin/newsletter">Newsletter</a>
-    <span style="margin-left:auto;font-size:0.7rem;color:#aaa;">v0.2.0</span>
-    <form method="POST" action="/api/auth/logout" class="logout">
-      <button type="submit" class="btn-small btn-secondary">Logout</button>
-    </form>
-  </nav>
+  <AdminNav />
 
   <h1>Newsletter</h1>
 

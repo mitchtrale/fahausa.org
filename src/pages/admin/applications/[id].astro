@@ -1,0 +1,129 @@
+---
+import { eq } from 'drizzle-orm';
+import { membershipApplications } from '../../../db/schema';
+import AdminNav from '../../../components/AdminNav.astro';
+
+const db = (Astro.locals as any).db;
+const id = Number(Astro.params.id);
+
+if (!db || isNaN(id)) {
+  return Astro.redirect('/admin/applications');
+}
+
+const results = await db.select().from(membershipApplications).where(eq(membershipApplications.id, id));
+const app = results[0];
+
+if (!app) {
+  return Astro.redirect('/admin/applications');
+}
+
+const date = app.createdAt ? new Date(app.createdAt + 'Z').toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit',
+}) : '—';
+
+const typeLabel = app.membershipType.charAt(0).toUpperCase() + app.membershipType.slice(1);
+
+let volunteerInterests: string[] = [];
+try {
+  if (app.volunteerInterests) {
+    const parsed = JSON.parse(app.volunteerInterests);
+    if (Array.isArray(parsed)) volunteerInterests = parsed;
+  }
+} catch {}
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{app.firstName} {app.lastName} — Application — FAHA Admin</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <AdminNav />
+
+  <p style="margin-bottom:1rem;"><a href="/admin/applications">&larr; All Applications</a></p>
+
+  <h1>{app.firstName} {app.lastName}</h1>
+  <p style="margin-bottom:1.5rem;">
+    <span class={`badge ${app.membershipType === 'family' ? 'badge-blue' : 'badge-gray'}`}>{typeLabel} Membership</span>
+    <span style="margin-left:1rem;color:#888;font-size:0.85rem;">Submitted {date}</span>
+  </p>
+
+  <div class="app-detail-grid">
+    <!-- Personal Information -->
+    <div class="app-detail-section">
+      <h3>Personal Information</h3>
+      <dl class="app-dl">
+        <dt>First Name</dt><dd>{app.firstName}</dd>
+        {app.middleName && <><dt>Middle Name</dt><dd>{app.middleName}</dd></>}
+        <dt>Last Name</dt><dd>{app.lastName}</dd>
+        {app.maidenName && <><dt>Maiden Name</dt><dd>{app.maidenName}</dd></>}
+        {app.profession && <><dt>Profession</dt><dd>{app.profession}</dd></>}
+        {app.ageGroup && <><dt>Age Group</dt><dd>{app.ageGroup}</dd></>}
+      </dl>
+    </div>
+
+    <!-- Contact & Address -->
+    <div class="app-detail-section">
+      <h3>Contact & Address</h3>
+      <dl class="app-dl">
+        <dt>Email</dt><dd><a href={`mailto:${app.email}`}>{app.email}</a></dd>
+        <dt>Phone</dt><dd><a href={`tel:${app.phone}`}>{app.phone}</a></dd>
+        <dt>Address</dt><dd>{app.address}<br />{app.city}, {app.state} {app.zip}</dd>
+      </dl>
+    </div>
+
+    <!-- About -->
+    {(app.finnishBackground || app.howHeard) && (
+      <div class="app-detail-section">
+        <h3>Background</h3>
+        <dl class="app-dl">
+          {app.finnishBackground && <><dt>Finnish Background</dt><dd>{app.finnishBackground}</dd></>}
+          {app.howHeard && <><dt>How They Heard About FAHA</dt><dd>{app.howHeard}</dd></>}
+        </dl>
+      </div>
+    )}
+
+    <!-- References -->
+    <div class="app-detail-section">
+      <h3>FAHA Member References</h3>
+      <dl class="app-dl">
+        <dt>Reference 1</dt><dd>{app.reference1Name} — <a href={`mailto:${app.reference1Email}`}>{app.reference1Email}</a></dd>
+        <dt>Reference 2</dt><dd>{app.reference2Name} — <a href={`mailto:${app.reference2Email}`}>{app.reference2Email}</a></dd>
+      </dl>
+    </div>
+
+    <!-- Family Members -->
+    {app.membershipType === 'family' && (app.spouseName || app.childrenNames) && (
+      <div class="app-detail-section">
+        <h3>Family Members</h3>
+        <dl class="app-dl">
+          {app.spouseName && <><dt>Spouse / Partner</dt><dd>{app.spouseName}</dd></>}
+          {app.childrenNames && <><dt>Children</dt><dd>{app.childrenNames}</dd></>}
+        </dl>
+      </div>
+    )}
+
+    <!-- Motivation -->
+    <div class="app-detail-section">
+      <h3>Motivation</h3>
+      <dl class="app-dl">
+        <dt>Reason for Joining</dt><dd>{app.reasonForJoining}</dd>
+      </dl>
+    </div>
+
+    <!-- Volunteer Interests -->
+    {volunteerInterests.length > 0 && (
+      <div class="app-detail-section">
+        <h3>Volunteer Interests</h3>
+        <div class="app-badges">
+          {volunteerInterests.map((interest: string) => (
+            <span class="badge badge-green">{interest}</span>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</body>
+</html>

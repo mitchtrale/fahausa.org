@@ -58,6 +58,34 @@ export const pendingSubscribers = sqliteTable('pending_subscribers', {
   createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
 });
 
+export const membershipApplications = sqliteTable('membership_applications', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  membershipType: text('membership_type').notNull(),
+  firstName: text('first_name').notNull(),
+  middleName: text('middle_name'),
+  lastName: text('last_name').notNull(),
+  maidenName: text('maiden_name'),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  address: text('address').notNull(),
+  city: text('city').notNull(),
+  state: text('state').notNull(),
+  zip: text('zip').notNull(),
+  profession: text('profession'),
+  ageGroup: text('age_group'),
+  finnishBackground: text('finnish_background'),
+  howHeard: text('how_heard'),
+  reference1Name: text('reference1_name').notNull(),
+  reference1Email: text('reference1_email').notNull(),
+  reference2Name: text('reference2_name').notNull(),
+  reference2Email: text('reference2_email').notNull(),
+  reasonForJoining: text('reason_for_joining').notNull(),
+  volunteerInterests: text('volunteer_interests'),
+  spouseName: text('spouse_name'),
+  childrenNames: text('children_names'),
+  createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+});
+
 export const sessions = sqliteTable('sessions', {
   id: text('id').primaryKey(),
   createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),

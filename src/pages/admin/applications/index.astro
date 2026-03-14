@@ -1,0 +1,52 @@
+---
+import { desc } from 'drizzle-orm';
+import { membershipApplications } from '../../../db/schema';
+import AdminNav from '../../../components/AdminNav.astro';
+
+const db = (Astro.locals as any).db;
+const applications = db
+  ? await db.select().from(membershipApplications).orderBy(desc(membershipApplications.createdAt))
+  : [];
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Applications — FAHA Admin</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <AdminNav />
+
+  <h1>Membership Applications</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>City</th>
+        <th>Type</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {applications.length === 0 && (
+        <tr><td colspan="4" style="text-align:center;color:#888;">No applications yet.</td></tr>
+      )}
+      {applications.map((app: any) => {
+        const date = app.createdAt ? new Date(app.createdAt + 'Z').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+        const typeLabel = app.membershipType.charAt(0).toUpperCase() + app.membershipType.slice(1);
+        return (
+          <tr>
+            <td><a href={`/admin/applications/${app.id}`}>{app.firstName} {app.lastName}</a></td>
+            <td>{app.city}</td>
+            <td><span class={`badge ${app.membershipType === 'family' ? 'badge-blue' : 'badge-gray'}`}>{typeLabel}</span></td>
+            <td>{date}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</body>
+</html>

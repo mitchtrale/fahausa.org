@@ -17,13 +17,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isProtectedAdmin =
     url.pathname.startsWith('/admin/events') ||
     url.pathname.startsWith('/admin/content') ||
-    url.pathname.startsWith('/admin/newsletter');
+    url.pathname.startsWith('/admin/newsletter') ||
+    url.pathname.startsWith('/admin/applications');
 
   // Protect API routes (except login)
   const isProtectedApi =
     url.pathname.startsWith('/api/') &&
     url.pathname !== '/api/auth/login' &&
     url.pathname !== '/api/contact' &&
+    url.pathname !== '/api/apply' &&
     !url.pathname.startsWith('/api/subscribe');
 
   if (isProtectedAdmin || isProtectedApi) {
@@ -36,16 +38,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const db = getDB(env.DB);
     const sessionId = getSessionIdFromCookie(request.headers.get('cookie'));
 
+    const redirectParam = isProtectedAdmin
+      ? `&redirect=${encodeURIComponent(url.pathname)}`
+      : '';
+
     if (!sessionId) {
       return isProtectedAdmin
-        ? redirect('/admin?error=not_logged_in')
+        ? redirect(`/admin?error=not_logged_in${redirectParam}`)
         : new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
 
     const valid = await validateSession(db, sessionId);
     if (!valid) {
       return isProtectedAdmin
-        ? redirect('/admin?error=session_expired')
+        ? redirect(`/admin?error=session_expired${redirectParam}`)
         : new Response(JSON.stringify({ error: 'Session expired' }), { status: 401 });
     }
   }

@@ -6,12 +6,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const env = (locals as any).runtime?.env;
   const formData = await request.formData();
   const password = formData.get('password')?.toString() ?? '';
+  const redirectTo = formData.get('redirect')?.toString() ?? '/admin/events';
+  const safeRedirect = redirectTo.startsWith('/admin/') ? redirectTo : '/admin/events';
+  const redirectParam = safeRedirect !== '/admin/events'
+    ? `&redirect=${encodeURIComponent(safeRedirect)}`
+    : '';
 
   const adminPassword = env?.ADMIN_PASSWORD ?? 'admin';
   if (password !== adminPassword) {
     return new Response(null, {
       status: 303,
-      headers: { Location: '/admin?error=invalid_password' },
+      headers: { Location: `/admin?error=invalid_password${redirectParam}` },
     });
   }
 
@@ -25,7 +30,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   return new Response(null, {
     status: 303,
     headers: {
-      Location: '/admin/events',
+      Location: safeRedirect,
       'Set-Cookie': makeSetCookie(sessionId, isDev),
     },
   });
