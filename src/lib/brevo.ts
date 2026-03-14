@@ -99,6 +99,19 @@ export async function updateCampaign(
   });
 }
 
+// --- Contacts / Subscribers ---
+
+export async function addContact(email: string): Promise<{ id: number }> {
+  return brevo('/contacts', {
+    method: 'POST',
+    body: JSON.stringify({
+      email,
+      listIds: [getListId()],
+      updateEnabled: true,
+    }),
+  });
+}
+
 // --- Transactional Email ---
 
 export interface TransactionalEmailOptions {

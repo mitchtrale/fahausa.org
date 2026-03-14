@@ -22,7 +22,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Protect API routes (except login)
   const isProtectedApi =
     url.pathname.startsWith('/api/') &&
-    url.pathname !== '/api/auth/login';
+    url.pathname !== '/api/auth/login' &&
+    url.pathname !== '/api/contact' &&
+    !url.pathname.startsWith('/api/subscribe');
 
   if (isProtectedAdmin || isProtectedApi) {
     if (!env?.DB) {
