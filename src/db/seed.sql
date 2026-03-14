@@ -1,3 +1,4 @@
+-- Mock site content for local development
 INSERT INTO site_content (section_key, label, content) VALUES
 ('membership_pricing', 'Membership Pricing', '## Annual Member Fees
 
@@ -79,20 +80,83 @@ Featuring 2 twin beds and full bathroom. *1 room sleeps 4, with bunk bed.*
 - **Members:** $100 / night
 - **Guests:** $150 / night
 
-## Upstairs Family Unit
-
-Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes, linens, and laundry facilities. Sleeps 6 (8 with sleeping bags). Includes sauna and pool access.
-
-- **$250 / night** *(Minimum 2 nights)*
-
 ## Camping
 
 Camp on the FAHA grounds. Contact the office to reserve your spot and confirm availability.
 
 - **$20 / night**');
 
--- Seed sample events
+-- Mock upcoming events for local development
+-- Uses dates relative to "today" so they always appear as upcoming
 INSERT INTO events (title, slug, description, date_start, time_start, time_end, location, image_url, ticket_price, published) VALUES
-('Juhannus – Midsummer Celebration', 'juhannus-midsummer-celebration-2026', 'Join us for our annual Midsummer festival featuring a traditional bonfire, Finnish folk music, dancing around the maypole, and a potluck dinner under the longest day of the year.', '2026-06-20', '2:00 PM', '10:00 PM', 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476', '/assets/images/container01.jpg', '$25 Members / $40 Guests', 1),
-('Sauna & Swim Social', 'sauna-swim-social-2026', 'A casual evening for members and guests to enjoy the saunas and pool together. Light refreshments provided.', '2026-05-09', '4:00 PM', '8:00 PM', 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476', '/assets/images/container05.jpg', 'Free for Members', 1),
-('Finnish Language Workshop', 'finnish-language-workshop-2026', 'Learn everyday Finnish phrases and explore the beauty of the Finnish language in this beginner-friendly workshop led by native speakers.', '2026-04-26', '10:00 AM', '12:00 PM', 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476', '/assets/images/container06.jpg', '$15', 1);
+('Sauna Saturday',
+ 'sauna-saturday',
+ 'Open sauna day for members and guests. Towels not provided. Enjoy the authentic Finnish sauna experience followed by a refreshing dip in the pool.',
+ date('now', '+3 days'), '13:00', '19:00',
+ 'FAHA, 197 W. Verano Avenue, Sonoma, CA 95476',
+ '/assets/images/container05.jpg',
+ 'Members free / Guests $20',
+ true),
+
+('Finnish Language Circle',
+ 'finnish-language-circle',
+ 'Casual conversation group for Finnish language learners at all levels. Native speakers welcome! Coffee and pulla provided.',
+ date('now', '+5 days'), '10:00', '11:30',
+ 'FAHA Library',
+ '/assets/images/container06.jpg',
+ 'Free',
+ true),
+
+('Board Meeting',
+ 'board-meeting',
+ 'Monthly FAHA Board of Directors meeting. Open to all members. New membership applications will be reviewed.',
+ date('now', '+10 days'), '18:00', '20:00',
+ 'FAHA Event Hall',
+ NULL,
+ NULL,
+ true),
+
+('Midsummer Celebration (Juhannus)',
+ 'midsummer-celebration-juhannus',
+ 'Join us for our annual Midsummer celebration! Traditional Finnish festivities including bonfire, music, dancing around the maypole, and a potluck dinner. Bring a dish to share.',
+ date('now', '+21 days'), '16:00', '22:00',
+ 'FAHA Grounds',
+ '/assets/images/container01.jpg',
+ 'Members $10 / Guests $25',
+ true),
+
+('Pool Party & BBQ',
+ 'pool-party-bbq',
+ 'Summer pool party for the whole family. BBQ burgers, hot dogs, and veggie options provided. BYOB. Kids welcome — lifeguard on duty.',
+ date('now', '+28 days'), '12:00', '17:00',
+ 'FAHA Pool & Patio',
+ '/assets/images/container09.jpg',
+ 'Members $5 / Guests $15',
+ true),
+
+('Finnish Film Night',
+ 'finnish-film-night',
+ 'Screening of a classic Finnish film with English subtitles. Popcorn and refreshments provided. Discussion to follow.',
+ date('now', '+35 days'), '19:00', '21:30',
+ 'FAHA Event Hall',
+ NULL,
+ 'Free',
+ true),
+
+('Craft Workshop: Traditional Finnish Weaving',
+ 'craft-workshop-finnish-weaving',
+ 'Learn the basics of traditional Finnish textile weaving. All materials provided. Beginners welcome. Space limited to 12 participants.',
+ date('now', '+42 days'), '10:00', '14:00',
+ 'FAHA Library',
+ NULL,
+ '$15 materials fee',
+ true),
+
+('Annual General Meeting',
+ 'annual-general-meeting',
+ 'Annual meeting for all FAHA members. Board elections, financial review, and planning for the year ahead. Your voice matters — please attend!',
+ date('now', '+60 days'), '17:00', '19:00',
+ 'FAHA Event Hall',
+ NULL,
+ NULL,
+ true);

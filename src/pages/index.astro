@@ -513,8 +513,7 @@ const { version } = await import('../../package.json');
         <>
           <p style="max-width:42rem;">
             FAHA offers a variety of accommodations for short-term stays, including
-            furnished guest rooms, a larger unit for longer stays, and camping around
-            the grounds.
+            furnished guest rooms and camping around the grounds.
           </p>
 
           <div class="accommodation-grid">
@@ -527,19 +526,6 @@ const { version } = await import('../../package.json');
               <div class="price">
                 Members: $100 / night<br />
                 Guests: $150 / night
-              </div>
-            </div>
-
-            <div class="accommodation-card">
-              <h4>Upstairs Family Unit</h4>
-              <p>
-                Furnished 3 bedroom, 2 bathroom apartment with kitchen, dishes,
-                linens, and laundry facilities. Sleeps 6 (8 with sleeping bags).
-                Includes sauna and pool access.
-              </p>
-              <div class="price">
-                $250 / night<br />
-                <em style="font-weight:300;">Minimum 2 nights</em>
               </div>
             </div>
 
@@ -624,15 +610,13 @@ const { version } = await import('../../package.json');
         </form>
         <p id="form-status" style="margin-top:0.75rem; display:none;"></p>
         <script>
-          const WORKER_URL = 'https://faha-contact-form.mctco.workers.dev';
-
           document.getElementById('contact-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('button[type="submit"]');
             const status = document.getElementById('form-status');
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value || 'FAHA Contact Form';
+            const subject = document.getElementById('subject').value || '';
             const message = document.getElementById('message').value;
 
             btn.disabled = true;
@@ -640,13 +624,10 @@ const { version } = await import('../../package.json');
             status.style.display = 'none';
 
             try {
-              const res = await fetch(WORKER_URL, {
+              const res = await fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  subject: `[FAHA] ${subject}`,
-                  body: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br>')}</p>`
-                })
+                body: JSON.stringify({ name, email, subject, message })
               });
 
               if (res.ok) {
@@ -679,14 +660,52 @@ const { version } = await import('../../package.json');
         We send an email every two weeks, featuring news about upcoming events,
         volunteer opportunities, resources for members, photos, and more.
       </p>
-      <form
-        class="newsletter-form"
-        action="https://formspree.io/f/YOUR_NEWSLETTER_ID"
-        method="POST"
-      >
-        <input type="email" name="email" placeholder="Your email address" required />
+      <form class="newsletter-form" id="newsletter-form">
+        <input type="email" name="email" id="newsletter-email" placeholder="Your email address" required />
         <button type="submit">Subscribe</button>
       </form>
+      <p id="newsletter-status" style="margin-top:0.75rem; display:none;"></p>
+      <script>
+        document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const btn = this.querySelector('button[type="submit"]');
+          const status = document.getElementById('newsletter-status');
+          const emailInput = document.getElementById('newsletter-email');
+          const email = emailInput.value.trim();
+
+          btn.disabled = true;
+          btn.textContent = 'Subscribing...';
+          status.style.display = 'none';
+
+          try {
+            const res = await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              status.textContent = 'Check your inbox! We\'ve sent a confirmation email to verify your subscription.';
+              status.style.color = '#2e7d32';
+              status.style.display = 'block';
+              this.reset();
+            } else {
+              status.textContent = data.error || 'Something went wrong. Please try again.';
+              status.style.color = '#c62828';
+              status.style.display = 'block';
+            }
+          } catch (err) {
+            status.textContent = 'Sorry, something went wrong. Please try again later.';
+            status.style.color = '#c62828';
+            status.style.display = 'block';
+          } finally {
+            btn.disabled = false;
+            btn.textContent = 'Subscribe';
+          }
+        });
+      </script>
     </div>
   </section>
 

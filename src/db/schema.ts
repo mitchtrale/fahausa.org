@@ -50,6 +50,14 @@ export const siteContent = sqliteTable('site_content', {
   updatedAt: text('updated_at').notNull().default(sql`(datetime('now'))`),
 });
 
+export const pendingSubscribers = sqliteTable('pending_subscribers', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  email: text('email').notNull(),
+  token: text('token').notNull().unique(),
+  expiresAt: text('expires_at').notNull(),
+  createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+});
+
 export const sessions = sqliteTable('sessions', {
   id: text('id').primaryKey(),
   createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
