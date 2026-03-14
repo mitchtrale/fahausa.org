@@ -1,0 +1,13 @@
+name = "faha-contact-form"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+SENDER_ADDRESS = "noreply@fahausa.org"
+SENDER_NAME = "FAHA Website"
+RECIPIENT_ADDRESS = "mitchtrale@gmail.com"
+ALLOWED_ORIGINS = "https://fahausa.org,http://localhost:4321"
+
+[[send_email]]
+name = "SEB"

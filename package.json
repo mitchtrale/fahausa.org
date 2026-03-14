@@ -6,10 +6,23 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 execute faha-db --local --file=src/db/migrations/0000_slimy_supreme_intelligence.sql",
+    "db:seed:local": "wrangler d1 execute faha-db --local --file=src/db/seed.sql",
+    "db:migrate:prod": "wrangler d1 execute faha-db --remote --file=src/db/migrations/0000_slimy_supreme_intelligence.sql",
+    "db:seed:prod": "wrangler d1 execute faha-db --remote --file=src/db/seed.sql",
+    "db:reset:local": "rm -rf .wrangler/state && npm run db:migrate:local && npm run db:seed:local",
+    "deploy": "npm run build && wrangler pages deploy dist"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.2.1",
-    "astro": "^5.17.1"
+    "@astrojs/cloudflare": "^12.6.12",
+    "astro": "^5.17.1",
+    "drizzle-orm": "^0.45.1",
+    "marked": "^15.0.12"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.9",
+    "wrangler": "^4.50.0"
   }
 }

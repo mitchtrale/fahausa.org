@@ -1,0 +1,231 @@
+---
+import { eq } from 'drizzle-orm';
+import { events, eventRecurrence, eventOccurrences } from '../../../db/schema';
+
+const db = (Astro.locals as any).db;
+const id = Number(Astro.params.id);
+
+if (!db || isNaN(id)) {
+  return Astro.redirect('/admin/events');
+}
+
+const [event] = await db.select().from(events).where(eq(events.id, id)).limit(1);
+if (!event) {
+  return Astro.redirect('/admin/events');
+}
+
+const [recurrence] = await db.select().from(eventRecurrence)
+  .where(eq(eventRecurrence.parentEventId, id)).limit(1);
+
+const occurrences = await db.select().from(eventOccurrences)
+  .where(eq(eventOccurrences.eventId, id))
+  .orderBy(eventOccurrences.date);
+
+const saved = Astro.url.searchParams.get('saved');
+const generated = Astro.url.searchParams.get('generated');
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit: {event.title} — FAHA Admin</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <nav>
+    <strong>FAHA Admin</strong>
+    <a href="/admin/events">Events</a>
+    <a href="/admin/content">Content</a>
+    <form method="POST" action="/api/auth/logout" class="logout" style="margin-left:auto;">
+      <button type="submit" class="btn-small btn-secondary">Logout</button>
+    </form>
+  </nav>
+
+  <h1>Edit Event</h1>
+  <a href="/admin/events" style="font-size:0.9rem;">&larr; Back to events</a>
+
+  {saved && <div class="message message-success" style="margin-top:1rem;">Event saved.</div>}
+  {generated && <div class="message message-success" style="margin-top:1rem;">Generated {generated} occurrences.</div>}
+
+  <form method="POST" action={`/api/events/${event.id}`} style="margin-top:1rem;">
+    <input type="hidden" name="_method" value="PUT" />
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input type="text" id="title" name="title" value={event.title} required />
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" value={event.location || ''} />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="date_start">Start Date *</label>
+        <input type="date" id="date_start" name="date_start" value={event.dateStart} required />
+      </div>
+      <div class="form-group">
+        <label for="date_end">End Date</label>
+        <input type="date" id="date_end" name="date_end" value={event.dateEnd || ''} />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="time_start">Start Time</label>
+        <input type="time" id="time_start" name="time_start" value={event.timeStart || ''} />
+      </div>
+      <div class="form-group">
+        <label for="time_end">End Time</label>
+        <input type="time" id="time_end" name="time_end" value={event.timeEnd || ''} />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description (Markdown)</label>
+      <textarea id="description" name="description" rows="8">{event.description || ''}</textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="ticket_price">Ticket Price</label>
+        <input type="text" id="ticket_price" name="ticket_price" value={event.ticketPrice || ''} />
+      </div>
+      <div class="form-group">
+        <label for="rsvp_url">RSVP URL</label>
+        <input type="url" id="rsvp_url" name="rsvp_url" value={event.rsvpUrl || ''} />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="image_url">Image URL</label>
+      <input type="text" id="image_url" name="image_url" value={event.imageUrl || ''} />
+      <input type="file" id="image_file" accept="image/jpeg,image/png,image/webp" style="margin-top:0.5rem;" />
+      {event.imageUrl && (
+        <img src={event.imageUrl} alt="Event image" style="margin-top:0.5rem;max-width:200px;max-height:150px;border-radius:3px;" />
+      )}
+    </div>
+
+    <div class="form-group">
+      <div class="checkbox-row">
+        <input type="checkbox" id="published" name="published" value="1" checked={event.published} />
+        <label for="published" style="margin-bottom:0;">Published</label>
+      </div>
+    </div>
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <hr />
+  <h2>Recurrence</h2>
+
+  <form method="POST" action={`/api/events/${event.id}`} style="margin-top:0.5rem;">
+    <input type="hidden" name="_method" value="SET_RECURRENCE" />
+
+    <div class="form-row-3">
+      <div class="form-group">
+        <label for="frequency">Frequency</label>
+        <select id="frequency" name="frequency">
+          <option value="">None (one-time event)</option>
+          <option value="weekly" selected={recurrence?.frequency === 'weekly'}>Weekly</option>
+          <option value="biweekly" selected={recurrence?.frequency === 'biweekly'}>Every 2 weeks</option>
+          <option value="monthly" selected={recurrence?.frequency === 'monthly'}>Monthly</option>
+          <option value="yearly" selected={recurrence?.frequency === 'yearly'}>Yearly</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="day_of_week">Day of Week</label>
+        <select id="day_of_week" name="day_of_week">
+          <option value="">—</option>
+          <option value="0" selected={recurrence?.dayOfWeek === 0}>Sunday</option>
+          <option value="1" selected={recurrence?.dayOfWeek === 1}>Monday</option>
+          <option value="2" selected={recurrence?.dayOfWeek === 2}>Tuesday</option>
+          <option value="3" selected={recurrence?.dayOfWeek === 3}>Wednesday</option>
+          <option value="4" selected={recurrence?.dayOfWeek === 4}>Thursday</option>
+          <option value="5" selected={recurrence?.dayOfWeek === 5}>Friday</option>
+          <option value="6" selected={recurrence?.dayOfWeek === 6}>Saturday</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="week_of_month">Week of Month (for monthly)</label>
+        <select id="week_of_month" name="week_of_month">
+          <option value="">—</option>
+          <option value="1" selected={recurrence?.weekOfMonth === 1}>1st</option>
+          <option value="2" selected={recurrence?.weekOfMonth === 2}>2nd</option>
+          <option value="3" selected={recurrence?.weekOfMonth === 3}>3rd</option>
+          <option value="4" selected={recurrence?.weekOfMonth === 4}>4th</option>
+          <option value="5" selected={recurrence?.weekOfMonth === 5}>Last</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="ends_at">Recurrence Ends</label>
+      <input type="date" id="ends_at" name="ends_at" value={recurrence?.endsAt || ''} />
+    </div>
+
+    <button type="submit">Save Recurrence Rule</button>
+  </form>
+
+  {recurrence && (
+    <form method="POST" action={`/api/events/${event.id}/generate`} style="margin-top:1rem;">
+      <button type="submit" class="btn-secondary">Generate Next 3 Months of Occurrences</button>
+    </form>
+  )}
+
+  {occurrences.length > 0 && (
+    <>
+      <h2 style="margin-top:2rem;">Occurrences ({occurrences.length})</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Override Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          {occurrences.map((occ: any) => (
+            <tr style={occ.cancelled ? 'opacity:0.5;' : ''}>
+              <td>{occ.date}</td>
+              <td>{occ.timeStart || event.timeStart || '—'}{occ.timeEnd || event.timeEnd ? ` – ${occ.timeEnd || event.timeEnd}` : ''}</td>
+              <td>
+                {occ.cancelled
+                  ? <span class="badge badge-gray">Cancelled</span>
+                  : <span class="badge badge-green">Active</span>
+                }
+              </td>
+              <td>{occ.overrideTitle || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  )}
+
+  <script>
+    const fileInput = document.getElementById('image_file');
+    const urlInput = document.getElementById('image_url');
+    if (fileInput && urlInput) {
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const fd = new FormData();
+        fd.append('image', file);
+        try {
+          const res = await fetch('/api/upload', { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.url) urlInput.value = data.url;
+          if (data.error) alert(data.error);
+        } catch (err) {
+          alert('Upload failed: ' + err.message);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

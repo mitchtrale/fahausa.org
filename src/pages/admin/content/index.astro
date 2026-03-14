@@ -1,0 +1,59 @@
+---
+import { siteContent } from '../../../db/schema';
+
+const db = (Astro.locals as any).db;
+const sections = db
+  ? await db.select().from(siteContent).orderBy(siteContent.id)
+  : [];
+
+const saved = Astro.url.searchParams.get('saved');
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Content — FAHA Admin</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <nav>
+    <strong>FAHA Admin</strong>
+    <a href="/admin/events">Events</a>
+    <a href="/admin/content">Content</a>
+    <form method="POST" action="/api/auth/logout" class="logout" style="margin-left:auto;">
+      <button type="submit" class="btn-small btn-secondary">Logout</button>
+    </form>
+  </nav>
+
+  <h1>Site Content</h1>
+  <p style="color:#666;margin-bottom:1.5rem;">
+    Edit the text content that appears on the public website. Content is written in Markdown.
+  </p>
+
+  {saved && <div class="message message-success">Content saved.</div>}
+
+  {sections.length === 0 && (
+    <div class="message message-error">
+      No content sections found. Run the seed script to populate initial content.
+    </div>
+  )}
+
+  {sections.map((section: any) => (
+    <div class="content-section">
+      <h3>{section.label}</h3>
+      <p style="font-size:0.8rem;color:#888;margin-bottom:0.75rem;">
+        Key: <code>{section.sectionKey}</code> &middot;
+        Last updated: {section.updatedAt || 'never'}
+      </p>
+      <form method="POST" action={`/api/content/${section.sectionKey}`}>
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="form-group">
+          <textarea name="content" rows="10">{section.content}</textarea>
+        </div>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  ))}
+</body>
+</html>

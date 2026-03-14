@@ -3,13 +3,7 @@ import { updateCampaign, setCampaignContent } from '../../../../lib/mailchimp';
 import { buildNewsletterHtml } from '../../../../lib/emailTemplate';
 import type { NewsletterSection } from '../../../../lib/emailTemplate';
 
-export const prerender = false;
-
-export const PATCH: APIRoute = async ({ params, request, cookies }) => {
-  if (cookies.get('faha_admin')?.value !== 'authenticated') {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  }
-
+export const PATCH: APIRoute = async ({ params, request }) => {
   const { id } = params;
   if (!id) {
     return new Response(JSON.stringify({ error: 'Missing campaign ID' }), { status: 400 });
@@ -24,10 +18,8 @@ export const PATCH: APIRoute = async ({ params, request, cookies }) => {
       sections: NewsletterSection[];
     };
 
-    // Update campaign settings
     await updateCampaign(id, { subjectLine, previewText, title });
 
-    // Regenerate and set the HTML content
     const html = buildNewsletterHtml({ title, sections });
     await setCampaignContent(id, html);
 

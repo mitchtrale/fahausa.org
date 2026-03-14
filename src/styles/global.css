@@ -17,7 +17,7 @@ body { -webkit-text-size-adjust: none; line-height: 1; }
   --color-bg: #ffffff;
   --color-text: #000000;
   --color-border: #e3e3e3;
-  --color-overlay: rgba(0, 0, 0, 0.541);
+  --color-overlay: rgba(0, 0, 0, 0.3);
 
   --font-family: 'Inter', sans-serif;
   --font-size-base: 16pt;
@@ -150,7 +150,7 @@ p:last-child { margin-bottom: 0; }
 /* ── Gazebo parallax break ───────────────────────────────────── */
 #gazebo {
   background-image: url('/assets/images/container01.jpg');
-  height: 40vh;
+  height: 60vh;
   min-height: 14rem;
   display: flex;
   align-items: flex-end;
@@ -171,32 +171,53 @@ p:last-child { margin-bottom: 0; }
   color: #f0ede8;
 }
 
+/* ── Top bar ─────────────────────────────────────────────────── */
+#top-bar {
+  border-bottom: 1px solid var(--color-border);
+}
+#top-bar .section-inner {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+#top-bar h1 {
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.25rem;
+  text-transform: uppercase;
+}
+
 /* ── Hero ────────────────────────────────────────────────────── */
 #hero .section-inner {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
-#hero h1 {
-  font-size: 0.8em;
-  letter-spacing: 0.25rem;
-  margin-bottom: 0.5rem;
+.hero-layout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4rem;
+  align-items: center;
 }
-#hero h3 {
-  font-size: 3.5em;
-  font-weight: 900;
-  letter-spacing: -0.2rem;
-  line-height: 1.05;
-  margin-bottom: 1rem;
+.hero-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 #hero .hero-img {
-  width: 12rem;
-  height: 12rem;
+  width: 8rem;
+  height: 8rem;
   object-fit: contain;
-  margin-bottom: var(--spacing);
 }
-#hero p {
+.hero-text h3 {
+  font-size: 2.2em;
+  font-weight: 900;
+  letter-spacing: -0.1rem;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.hero-text p {
   max-width: 32rem;
-  font-size: 1.05em;
+  font-size: 0.95em;
   margin-bottom: 0;
 }
 
@@ -216,7 +237,7 @@ p:last-child { margin-bottom: 0; }
 
 /* ── Community section ───────────────────────────────────────── */
 #community .section-inner {
-  gap: 3rem;
+  gap: 2.5rem;
 }
 
 /* ── Community / events image break ─────────────────────────── */
@@ -231,15 +252,10 @@ p:last-child { margin-bottom: 0; }
 
 /* ── Events + Holidays section ───────────────────────────────── */
 #events .section-inner {
-  gap: 3rem;
+  gap: 2.5rem;
 }
 #events .embed-wrapper {
   margin-top: 1rem;
-}
-
-/* ── Holidays image break ────────────────────────────────────── */
-#holidays-break {
-  background-image: url('/assets/images/container12.jpg');
 }
 
 /* ── Membership ──────────────────────────────────────────────── */
@@ -297,8 +313,7 @@ p:last-child { margin-bottom: 0; }
 #how-faha-works p { max-width: 42rem; }
 
 /* ── Finnish Saunas ──────────────────────────────────────────── */
-#saunas .section-inner { gap: 3rem; }
-#saunas h2 { font-size: 3em; }
+#saunas .section-inner { gap: 2.5rem; }
 
 /* ── Löyly bg section ────────────────────────────────────────── */
 #loyly {
@@ -306,18 +321,13 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ── Pool section ────────────────────────────────────────────── */
-#pool .section-inner { gap: 3rem; }
+#pool .section-inner { gap: 2.5rem; }
 
 /* ── Overnight break + section ───────────────────────────────── */
 #overnight-break {
   background-image: url('/assets/images/container06.jpg');
 }
-#overnight h3 { font-size: 2em; }
-
-/* ── Rentals / overnight image break ─────────────────────────── */
-#rentals-overnight-break {
-  background-image: url('/assets/images/container12.jpg');
-}
+#overnight h2 { margin-bottom: 0.5rem; }
 
 /* ── Private Event Rentals ───────────────────────────────────── */
 #events-rentals .section-inner { gap: 2.5rem; }
@@ -334,11 +344,9 @@ p:last-child { margin-bottom: 0; }
 
 /* ── Contact ─────────────────────────────────────────────────── */
 #contact .section-inner {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-  gap: 3rem;
+  gap: 2.5rem;
 }
-#contact h2 { font-size: 3em; }
+#contact h2 { margin-bottom: 0.5rem; }
 #contact .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -564,7 +572,7 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 1280px) {
   :root { --pad-h: 4rem; }
   .two-col { gap: 5rem; }
-  #hero h3 { font-size: 3em; }
+  .hero-text h3 { font-size: 2em; }
 }
 
 @media (max-width: 1024px) {
@@ -578,7 +586,8 @@ p:last-child { margin-bottom: 0; }
   .rental-features { grid-template-columns: 1fr 1fr; }
   #contact .contact-grid { grid-template-columns: 1fr; }
   .hours-fees-grid { grid-template-columns: 1fr; gap: 2rem; }
-  #hero h3 { font-size: 2.5em; }
+  .hero-layout { gap: 3rem; }
+  .hero-text h3 { font-size: 1.8em; }
 }
 
 @media (max-width: 736px) {
@@ -593,7 +602,8 @@ p:last-child { margin-bottom: 0; }
   #footer .section-inner { flex-direction: column; align-items: flex-start; }
   .newsletter-form { flex-direction: column; }
   .newsletter-form input { border-right: 1px solid var(--color-border); }
-  #hero h3 { font-size: 2.2em; letter-spacing: -0.1rem; }
+  .hero-layout { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .hero-text h3 { font-size: 2em; }
   h2 { font-size: 2em; }
   /* Disable fixed background on mobile (Safari issue) */
   .section-bg { background-attachment: scroll; }
@@ -602,5 +612,46 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 480px) {
   :root { --pad-h: 1.5rem; }
   html { font-size: 12pt; }
-  #hero h3 { font-size: 1.9em; }
+  .hero-text h3 { font-size: 1.7em; }
 }
+
+/* ── Events list (DB-driven) ──────────────────────────────────────── */
+.events-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.event-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.event-date {
+  font-weight: 700;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+.event-title {
+  font-weight: 500;
+}
+.event-time, .event-price {
+  font-size: 0.85em;
+  color: #666;
+}
+.event-rsvp {
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* ── DB-rendered markdown content ─────────────────────────────────── */
+.db-content h2 { font-size: 1.1em; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+.db-content h3 { font-size: 1em; margin-top: 1rem; margin-bottom: 0.4rem; }
+.db-content ul { margin: 0.5rem 0; padding-left: 1.25rem; }
+.db-content li { margin-bottom: 0.25rem; }
+.db-content p { margin-bottom: 0.75rem; }

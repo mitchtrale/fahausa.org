@@ -3,14 +3,7 @@ import { createCampaign, setCampaignContent } from '../../../../lib/mailchimp';
 import { buildNewsletterHtml } from '../../../../lib/emailTemplate';
 import type { NewsletterSection } from '../../../../lib/emailTemplate';
 
-export const prerender = false;
-
-export const POST: APIRoute = async ({ request, cookies }) => {
-  // Auth check
-  if (cookies.get('faha_admin')?.value !== 'authenticated') {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-  }
-
+export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     const { subjectLine, previewText, title, sections } = body as {
@@ -20,14 +13,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       sections: NewsletterSection[];
     };
 
-    // Create the campaign in Mailchimp
     const campaign = await createCampaign({
       subjectLine,
       previewText,
       title,
     });
 
-    // Generate and set the HTML content
     const html = buildNewsletterHtml({ title, sections });
     await setCampaignContent(campaign.id, html);
 
