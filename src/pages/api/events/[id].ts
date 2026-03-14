@@ -25,8 +25,11 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
   }
 
   if (method === 'PUT') {
+    const slug = form.get('slug')?.toString()?.trim() || '';
+
     await db.update(events).set({
       title: form.get('title')?.toString() || '',
+      slug,
       description: form.get('description')?.toString() || null,
       dateStart: form.get('date_start')?.toString() || '',
       dateEnd: form.get('date_end')?.toString() || null,

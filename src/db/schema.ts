@@ -4,6 +4,7 @@ import { sql } from 'drizzle-orm';
 export const events = sqliteTable('events', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   title: text('title').notNull(),
+  slug: text('slug').notNull().default(''),
   description: text('description'),
   dateStart: text('date_start').notNull(),
   dateEnd: text('date_end'),

@@ -103,6 +103,13 @@ const generated = Astro.url.searchParams.get('generated');
     </div>
 
     <div class="form-group">
+      <label for="slug">URL Slug</label>
+      <input type="text" id="slug" name="slug" value={event.slug || ''} />
+      <small style="color:#888;">Event page: /events/{event.slug || '(none)'}</small>
+      <div id="slug-warning" style="display:none;color:#c62828;font-size:0.85rem;margin-top:0.25rem;"></div>
+    </div>
+
+    <div class="form-group">
       <label for="image_url">Image URL</label>
       <input type="text" id="image_url" name="image_url" value={event.imageUrl || ''} />
       <input type="file" id="image_file" accept="image/jpeg,image/png,image/webp" style="margin-top:0.5rem;" />
@@ -209,7 +216,7 @@ const generated = Astro.url.searchParams.get('generated');
     </>
   )}
 
-  <script>
+  <script define:vars={{ eventId: event.id, originalSlug: event.slug || '' }}>
     const fileInput = document.getElementById('image_file');
     const urlInput = document.getElementById('image_url');
     if (fileInput && urlInput) {
@@ -228,6 +235,35 @@ const generated = Astro.url.searchParams.get('generated');
         }
       });
     }
+
+    // Slug change warning and duplicate check
+    const slugInput = document.getElementById('slug');
+    const slugWarning = document.getElementById('slug-warning');
+    let checkTimer;
+
+    slugInput?.addEventListener('input', () => {
+      clearTimeout(checkTimer);
+      const slug = slugInput.value.trim();
+      const warnings = [];
+
+      if (originalSlug && slug !== originalSlug) {
+        warnings.push('Changing the slug will break any existing links to /events/' + originalSlug);
+      }
+
+      if (!slug) {
+        slugWarning.style.display = warnings.length ? 'block' : 'none';
+        slugWarning.textContent = warnings.join(' ');
+        return;
+      }
+
+      checkTimer = setTimeout(async () => {
+        const res = await fetch(`/api/events/check-slug?slug=${encodeURIComponent(slug)}&excludeId=${eventId}`);
+        const { taken } = await res.json();
+        if (taken) warnings.push('This slug is already in use by another event.');
+        slugWarning.textContent = warnings.join(' ');
+        slugWarning.style.display = warnings.length ? 'block' : 'none';
+      }, 400);
+    });
   </script>
 </body>
 </html>
