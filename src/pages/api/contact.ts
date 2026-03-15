@@ -2,7 +2,8 @@ import type { APIRoute } from 'astro';
 import { sendTransactionalEmail } from '../../lib/brevo';
 import { buildTransactionalHtml } from '../../lib/transactionalTemplate';
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const env = (locals as any).env;
   const data = await request.json();
   const { name, email, subject, message } = data;
 
@@ -32,7 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
   const textContent = `Name: ${name}\nEmail: ${email}\nSubject: ${contactSubject}\n\nMessage:\n${message}`;
 
   try {
-    const result = await sendTransactionalEmail({
+    const result = await sendTransactionalEmail(env, {
       to: [{ email: 'mtrale@fahausa.org', name: 'FAHA' }],
       subject: `[FAHA Contact] ${contactSubject}`,
       htmlContent,

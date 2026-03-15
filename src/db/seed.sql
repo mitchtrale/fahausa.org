@@ -84,7 +84,13 @@ Featuring 2 twin beds and full bathroom. *1 room sleeps 4, with bunk bed.*
 
 Camp on the FAHA grounds. Contact the office to reserve your spot and confirm availability.
 
-- **$20 / night**');
+- **$20 / night**'),
+
+('donate_heading', 'Donate Heading', 'Donate to FAHA'),
+
+('donate_blurb', 'Donate Text', 'FAHA is a nonprofit organization sustained by the generosity of our community. Your donation helps us maintain our historic buildings, keep our saunas and pool running, and host cultural events that bring people together. Every contribution, large or small, makes a difference.'),
+
+('donate_url', 'Donate URL', 'https://www.paypal.com/donate');
 
 -- Mock upcoming events for local development
 -- Uses dates relative to "today" so they always appear as upcoming

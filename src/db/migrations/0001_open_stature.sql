@@ -1,4 +1,4 @@
-CREATE TABLE `membership_applications` (
+CREATE TABLE IF NOT EXISTS `membership_applications` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`membership_type` text NOT NULL,
 	`first_name` text NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `membership_applications` (
 	`created_at` text DEFAULT (datetime('now')) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `pending_subscribers` (
+CREATE TABLE IF NOT EXISTS `pending_subscribers` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`email` text NOT NULL,
 	`token` text NOT NULL,
@@ -34,5 +34,4 @@ CREATE TABLE `pending_subscribers` (
 	`created_at` text DEFAULT (datetime('now')) NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `pending_subscribers_token_unique` ON `pending_subscribers` (`token`);--> statement-breakpoint
-ALTER TABLE `events` ADD `slug` text DEFAULT '' NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS `pending_subscribers_token_unique` ON `pending_subscribers` (`token`);

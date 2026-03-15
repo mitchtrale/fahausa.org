@@ -1,27 +1,27 @@
-function getApiKey(): string {
-  const key = import.meta.env.BREVO_API_KEY;
+function getApiKey(env: any): string {
+  const key = env?.BREVO_API_KEY;
   if (!key) throw new Error('BREVO_API_KEY is not set');
   return key;
 }
 
-function getListId(): number {
-  const id = import.meta.env.BREVO_LIST_ID;
+function getListId(env: any): number {
+  const id = env?.BREVO_LIST_ID;
   if (!id) throw new Error('BREVO_LIST_ID is not set');
   return Number(id);
 }
 
-function getSender(): { name: string; email: string } {
+function getSender(env: any): { name: string; email: string } {
   return {
-    name: import.meta.env.BREVO_SENDER_NAME || 'FAHA',
-    email: import.meta.env.BREVO_SENDER_EMAIL || 'mtrale@fahausa.org',
+    name: env?.BREVO_SENDER_NAME || 'FAHA',
+    email: env?.BREVO_SENDER_EMAIL || 'mtrale@fahausa.org',
   };
 }
 
-async function brevo(path: string, options: RequestInit = {}): Promise<any> {
+async function brevo(env: any, path: string, options: RequestInit = {}): Promise<any> {
   const res = await fetch(`https://api.brevo.com/v3${path}`, {
     ...options,
     headers: {
-      'api-key': getApiKey(),
+      'api-key': getApiKey(env),
       'Content-Type': 'application/json',
       ...(options.headers || {}),
     },
@@ -54,12 +54,12 @@ export interface BrevoCampaignListResponse {
   count: number;
 }
 
-export async function listCampaigns(limit = 50, offset = 0): Promise<BrevoCampaignListResponse> {
-  return brevo(`/emailCampaigns?type=classic&limit=${limit}&offset=${offset}&sort=desc&excludeHtmlContent=true`);
+export async function listCampaigns(env: any, limit = 50, offset = 0): Promise<BrevoCampaignListResponse> {
+  return brevo(env, `/emailCampaigns?type=classic&limit=${limit}&offset=${offset}&sort=desc&excludeHtmlContent=true`);
 }
 
-export async function getCampaign(id: number): Promise<BrevoCampaign> {
-  return brevo(`/emailCampaigns/${id}`);
+export async function getCampaign(env: any, id: number): Promise<BrevoCampaign> {
+  return brevo(env, `/emailCampaigns/${id}`);
 }
 
 export interface CreateCampaignData {
@@ -69,21 +69,22 @@ export interface CreateCampaignData {
   htmlContent: string;
 }
 
-export async function createCampaign(data: CreateCampaignData): Promise<{ id: number }> {
-  return brevo('/emailCampaigns', {
+export async function createCampaign(env: any, data: CreateCampaignData): Promise<{ id: number }> {
+  return brevo(env, '/emailCampaigns', {
     method: 'POST',
     body: JSON.stringify({
       name: data.name,
       subject: data.subject,
       previewText: data.previewText,
       htmlContent: data.htmlContent,
-      sender: getSender(),
-      recipients: { listIds: [getListId()] },
+      sender: getSender(env),
+      recipients: { listIds: [getListId(env)] },
     }),
   });
 }
 
 export async function updateCampaign(
+  env: any,
   id: number,
   data: Partial<CreateCampaignData>,
 ): Promise<void> {
@@ -93,7 +94,7 @@ export async function updateCampaign(
   if (data.previewText) body.previewText = data.previewText;
   if (data.htmlContent) body.htmlContent = data.htmlContent;
 
-  await brevo(`/emailCampaigns/${id}`, {
+  await brevo(env, `/emailCampaigns/${id}`, {
     method: 'PUT',
     body: JSON.stringify(body),
   });
@@ -101,12 +102,12 @@ export async function updateCampaign(
 
 // --- Contacts / Subscribers ---
 
-export async function addContact(email: string): Promise<{ id: number }> {
-  return brevo('/contacts', {
+export async function addContact(env: any, email: string): Promise<{ id: number }> {
+  return brevo(env, '/contacts', {
     method: 'POST',
     body: JSON.stringify({
       email,
-      listIds: [getListId()],
+      listIds: [getListId(env)],
       updateEnabled: true,
     }),
   });
@@ -129,10 +130,11 @@ export interface TransactionalEmailResponse {
 }
 
 export async function sendTransactionalEmail(
+  env: any,
   options: TransactionalEmailOptions,
 ): Promise<TransactionalEmailResponse> {
   const body: Record<string, any> = {
-    sender: getSender(),
+    sender: getSender(env),
     to: options.to,
     subject: options.subject,
     htmlContent: options.htmlContent,
@@ -143,7 +145,7 @@ export async function sendTransactionalEmail(
   if (options.params) body.params = options.params;
   if (options.tags) body.tags = options.tags;
 
-  return brevo('/smtp/email', {
+  return brevo(env, '/smtp/email', {
     method: 'POST',
     body: JSON.stringify(body),
   });

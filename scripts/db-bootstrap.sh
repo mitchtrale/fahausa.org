@@ -8,9 +8,7 @@ set -e
 echo "==> Removing existing local D1 state..."
 rm -rf .wrangler/state
 
-echo "==> Running migrations..."
-npx wrangler d1 execute faha-db --local --file=src/db/migrations/0000_slimy_supreme_intelligence.sql
-npx wrangler d1 execute faha-db --local --file=src/db/migrations/0001_pending_subscribers.sql
+bash scripts/db-migrate.sh --local
 
 echo "==> Seeding data..."
 npx wrangler d1 execute faha-db --local --file=src/db/seed.sql

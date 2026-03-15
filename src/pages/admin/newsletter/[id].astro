@@ -6,17 +6,18 @@ import AdminNav from '../../../components/AdminNav.astro';
 
 const { id } = Astro.params;
 const provider = Astro.url.searchParams.get('provider') || 'brevo';
+const env = (Astro.locals as any).env;
 let campaign: any = null;
 let error = '';
 
 try {
   if (provider === 'mailchimp') {
-    campaign = await getMailchimpCampaign(id!);
+    campaign = await getMailchimpCampaign(env, id!);
     if (campaign.status !== 'save' && campaign.status !== 'draft') {
       error = `This campaign has status "${campaign.status}" and cannot be edited here. Use the Mailchimp interface.`;
     }
   } else {
-    campaign = await getBrevoCampaign(Number(id));
+    campaign = await getBrevoCampaign(env, Number(id));
     if (campaign.status !== 'draft') {
       error = `This campaign has status "${campaign.status}" and cannot be edited here. Use the Brevo dashboard.`;
     }

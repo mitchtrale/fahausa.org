@@ -3,7 +3,8 @@ import { createCampaign, setCampaignContent } from '../../../../lib/mailchimp';
 import { buildNewsletterHtml } from '../../../../lib/emailTemplate';
 import type { NewsletterSection } from '../../../../lib/emailTemplate';
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const env = (locals as any).env;
   try {
     const body = await request.json();
     const { subjectLine, previewText, title, sections } = body as {
@@ -13,14 +14,14 @@ export const POST: APIRoute = async ({ request }) => {
       sections: NewsletterSection[];
     };
 
-    const campaign = await createCampaign({
+    const campaign = await createCampaign(env, {
       subjectLine,
       previewText,
       title,
     });
 
     const html = buildNewsletterHtml({ title, sections });
-    await setCampaignContent(campaign.id, html);
+    await setCampaignContent(env, campaign.id, html);
 
     return new Response(JSON.stringify({ id: campaign.id, web_id: campaign.web_id }), {
       status: 201,

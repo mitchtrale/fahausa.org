@@ -3,7 +3,8 @@ import { createCampaign } from '../../../../lib/brevo';
 import { buildNewsletterHtml } from '../../../../lib/emailTemplate';
 import type { NewsletterSection } from '../../../../lib/emailTemplate';
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const env = (locals as any).env;
   try {
     const body = await request.json();
     const { subjectLine, previewText, title, sections } = body as {
@@ -14,7 +15,7 @@ export const POST: APIRoute = async ({ request }) => {
     };
 
     const html = buildNewsletterHtml({ title, sections });
-    const result = await createCampaign({
+    const result = await createCampaign(env, {
       name: title,
       subject: subjectLine,
       previewText,
