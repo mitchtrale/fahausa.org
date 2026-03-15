@@ -13,6 +13,7 @@ function generateToken(): string {
 }
 
 export const POST: APIRoute = async ({ request, locals, url }) => {
+  const env = (locals as any).env;
   const data = await request.json();
   const { email } = data;
 
@@ -77,7 +78,7 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
   });
 
   try {
-    await sendTransactionalEmail({
+    await sendTransactionalEmail(env, {
       to: [{ email: trimmed }],
       subject: 'Confirm your FAHA Newsletter subscription',
       htmlContent,

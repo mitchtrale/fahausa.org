@@ -3,20 +3,22 @@ import { listCampaigns as listMailchimpCampaigns } from '../../../lib/mailchimp'
 import { listCampaigns as listBrevoCampaigns } from '../../../lib/brevo';
 import AdminNav from '../../../components/AdminNav.astro';
 
+const env = (Astro.locals as any).env;
+
 let mcCampaigns: any[] = [];
 let brevoCampaigns: any[] = [];
 let mcError = '';
 let brevoError = '';
 
 try {
-  const result = await listMailchimpCampaigns();
+  const result = await listMailchimpCampaigns(env);
   mcCampaigns = result.campaigns;
 } catch (err: any) {
   mcError = err.message;
 }
 
 try {
-  const result = await listBrevoCampaigns();
+  const result = await listBrevoCampaigns(env);
   brevoCampaigns = result.campaigns || [];
 } catch (err: any) {
   brevoError = err.message;

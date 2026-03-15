@@ -12,6 +12,7 @@ function json(body: Record<string, any>, status = 200) {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).db;
+  const env = (locals as any).env;
   if (!db) {
     return json({ error: 'Database not available' }, 503);
   }
@@ -96,7 +97,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         preheader: `${data.firstName} ${data.lastName} — ${data.city}`,
       });
 
-      await sendTransactionalEmail({
+      await sendTransactionalEmail(env, {
         to: [{ email: 'mtrale@fahausa.org', name: 'FAHA' }],
         subject: `[FAHA] New Membership Application — ${data.firstName} ${data.lastName}`,
         htmlContent,

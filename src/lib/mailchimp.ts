@@ -1,13 +1,13 @@
 const API_SERVER = 'us7';
 
-function getApiKey(): string {
-  const key = import.meta.env.MAILCHIMP_API_KEY;
+function getApiKey(env: any): string {
+  const key = env?.MAILCHIMP_API_KEY;
   if (!key) throw new Error('MAILCHIMP_API_KEY is not set');
   return key;
 }
 
-function getListId(): string {
-  const id = import.meta.env.MAILCHIMP_LIST_ID;
+function getListId(env: any): string {
+  const id = env?.MAILCHIMP_LIST_ID;
   if (!id) throw new Error('MAILCHIMP_LIST_ID is not set');
   return id;
 }
@@ -16,18 +16,18 @@ function baseUrl(): string {
   return `https://${API_SERVER}.api.mailchimp.com/3.0`;
 }
 
-function headers(): HeadersInit {
-  const key = getApiKey();
+function headers(env: any): HeadersInit {
+  const key = getApiKey(env);
   return {
     Authorization: `Basic ${btoa(`anystring:${key}`)}`,
     'Content-Type': 'application/json',
   };
 }
 
-async function mc(path: string, options: RequestInit = {}): Promise<any> {
+async function mc(env: any, path: string, options: RequestInit = {}): Promise<any> {
   const res = await fetch(`${baseUrl()}${path}`, {
     ...options,
-    headers: { ...headers(), ...(options.headers || {}) },
+    headers: { ...headers(env), ...(options.headers || {}) },
   });
   const body = await res.json();
   if (!res.ok) {
@@ -57,16 +57,16 @@ export interface CampaignListResponse {
   total_items: number;
 }
 
-export async function listCampaigns(count = 50, offset = 0): Promise<CampaignListResponse> {
-  return mc(`/campaigns?count=${count}&offset=${offset}&sort_field=create_time&sort_dir=DESC`);
+export async function listCampaigns(env: any, count = 50, offset = 0): Promise<CampaignListResponse> {
+  return mc(env, `/campaigns?count=${count}&offset=${offset}&sort_field=create_time&sort_dir=DESC`);
 }
 
-export async function getCampaign(id: string): Promise<Campaign> {
-  return mc(`/campaigns/${id}`);
+export async function getCampaign(env: any, id: string): Promise<Campaign> {
+  return mc(env, `/campaigns/${id}`);
 }
 
-export async function getCampaignContent(id: string): Promise<{ html: string }> {
-  return mc(`/campaigns/${id}/content`);
+export async function getCampaignContent(env: any, id: string): Promise<{ html: string }> {
+  return mc(env, `/campaigns/${id}/content`);
 }
 
 export interface CreateCampaignData {
@@ -77,13 +77,13 @@ export interface CreateCampaignData {
   replyTo?: string;
 }
 
-export async function createCampaign(data: CreateCampaignData): Promise<Campaign> {
-  return mc('/campaigns', {
+export async function createCampaign(env: any, data: CreateCampaignData): Promise<Campaign> {
+  return mc(env, '/campaigns', {
     method: 'POST',
     body: JSON.stringify({
       type: 'regular',
       recipients: {
-        list_id: getListId(),
+        list_id: getListId(env),
       },
       settings: {
         subject_line: data.subjectLine,
@@ -96,7 +96,7 @@ export async function createCampaign(data: CreateCampaignData): Promise<Campaign
   });
 }
 
-export async function updateCampaign(id: string, data: Partial<CreateCampaignData>): Promise<Campaign> {
+export async function updateCampaign(env: any, id: string, data: Partial<CreateCampaignData>): Promise<Campaign> {
   const settings: Record<string, string> = {};
   if (data.subjectLine) settings.subject_line = data.subjectLine;
   if (data.previewText) settings.preview_text = data.previewText;
@@ -104,14 +104,14 @@ export async function updateCampaign(id: string, data: Partial<CreateCampaignDat
   if (data.fromName) settings.from_name = data.fromName;
   if (data.replyTo) settings.reply_to = data.replyTo;
 
-  return mc(`/campaigns/${id}`, {
+  return mc(env, `/campaigns/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ settings }),
   });
 }
 
-export async function setCampaignContent(id: string, html: string): Promise<any> {
-  return mc(`/campaigns/${id}/content`, {
+export async function setCampaignContent(env: any, id: string, html: string): Promise<any> {
+  return mc(env, `/campaigns/${id}/content`, {
     method: 'PUT',
     body: JSON.stringify({ html }),
   });

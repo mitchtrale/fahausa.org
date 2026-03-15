@@ -3,7 +3,8 @@ import { updateCampaign } from '../../../../lib/brevo';
 import { buildNewsletterHtml } from '../../../../lib/emailTemplate';
 import type { NewsletterSection } from '../../../../lib/emailTemplate';
 
-export const PATCH: APIRoute = async ({ params, request }) => {
+export const PATCH: APIRoute = async ({ params, request, locals }) => {
+  const env = (locals as any).env;
   const id = Number(params.id);
   if (!id) {
     return new Response(JSON.stringify({ error: 'Missing campaign ID' }), { status: 400 });
@@ -19,7 +20,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
     };
 
     const html = buildNewsletterHtml({ title, sections });
-    await updateCampaign(id, {
+    await updateCampaign(env, id, {
       name: title,
       subject: subjectLine,
       previewText,

@@ -117,10 +117,34 @@ p:last-child { margin-bottom: 0; }
   border-color: #fff;
   color: #fff;
 }
+.btn-donate {
+  background: #1a5fa8;
+  border: 2px solid #1a5fa8;
+  color: #fff;
+  padding: 0.85rem 2.5rem;
+  font-size: 0.85em;
+  border-radius: 0;
+}
+.btn-donate:hover {
+  background: #14497e;
+  border-color: #14497e;
+  opacity: 1;
+}
 
 /* ── WHITE content sections ──────────────────────────────────── */
 .section-white { background: #fff; }
 .section-white .section-inner { display: flex; flex-direction: column; gap: var(--spacing); }
+
+/* ── DONATE section ─────────────────────────────────────────── */
+.section-donate { background: #f0f4f8; }
+.section-donate .section-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  text-align: center;
+  align-items: center;
+}
+.section-donate .db-content { max-width: 42rem; }
 
 /* ── BACKGROUND IMAGE sections (parallax) ────────────────────── */
 .section-bg {

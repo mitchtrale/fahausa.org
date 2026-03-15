@@ -33,7 +33,8 @@ export const GET: APIRoute = async ({ url, locals, redirect }) => {
   }
 
   try {
-    await addContact(pending.email);
+    const env = (locals as any).env;
+    await addContact(env, pending.email);
   } catch (err: any) {
     // "Contact already exist" is fine — they're already on the list
     if (!err.message?.includes('Contact already exist')) {

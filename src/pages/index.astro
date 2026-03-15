@@ -50,6 +50,9 @@ const poolHours = await md('pool_hours');
 const poolInfo = await md('pool_info');
 const eventRentals = await md('event_rentals');
 const overnightStays = await md('overnight_stays');
+const donateHeading = content['donate_heading'] || 'Donate to FAHA';
+const donateBlurb = await md('donate_blurb');
+const donateUrl = content['donate_url'] || '#';
 
 const { version } = await import('../../package.json');
 ---
@@ -544,6 +547,27 @@ const { version } = await import('../../package.json');
           </div>
         </>
       )}
+    </div>
+  </section>
+
+  <!-- ── DONATE ───────────────────────────────────────────────────── -->
+  <section id="donate" class="section-donate">
+    <div class="section-inner fade-in">
+      <h2>{donateHeading}</h2>
+      {donateBlurb ? (
+        <div class="db-content" set:html={donateBlurb} />
+      ) : (
+        <p style="max-width:42rem;">
+          FAHA is a nonprofit organization sustained by the generosity of our community.
+          Your donation helps us maintain our historic buildings, keep our saunas and pool
+          running, and host cultural events that bring people together.
+        </p>
+      )}
+      <div>
+        <a href={donateUrl} target="_blank" rel="noopener noreferrer" class="btn btn-donate">
+          Donate with PayPal
+        </a>
+      </div>
     </div>
   </section>
 

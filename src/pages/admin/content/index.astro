@@ -43,7 +43,13 @@ const saved = Astro.url.searchParams.get('saved');
       <form method="POST" action={`/api/content/${section.sectionKey}`}>
         <input type="hidden" name="_method" value="PUT" />
         <div class="form-group">
-          <textarea name="content" rows="10">{section.content}</textarea>
+          {section.sectionKey === 'donate_url' ? (
+            <input type="url" name="content" value={section.content} placeholder="https://..." style="width:100%;padding:0.5rem;" />
+          ) : section.sectionKey === 'donate_heading' ? (
+            <input type="text" name="content" value={section.content} style="width:100%;padding:0.5rem;" />
+          ) : (
+            <textarea name="content" rows="10">{section.content}</textarea>
+          )}
         </div>
         <button type="submit">Save</button>
       </form>

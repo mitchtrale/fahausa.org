@@ -3,7 +3,8 @@ import { updateCampaign, setCampaignContent } from '../../../../lib/mailchimp';
 import { buildNewsletterHtml } from '../../../../lib/emailTemplate';
 import type { NewsletterSection } from '../../../../lib/emailTemplate';
 
-export const PATCH: APIRoute = async ({ params, request }) => {
+export const PATCH: APIRoute = async ({ params, request, locals }) => {
+  const env = (locals as any).env;
   const { id } = params;
   if (!id) {
     return new Response(JSON.stringify({ error: 'Missing campaign ID' }), { status: 400 });
@@ -18,10 +19,10 @@ export const PATCH: APIRoute = async ({ params, request }) => {
       sections: NewsletterSection[];
     };
 
-    await updateCampaign(id, { subjectLine, previewText, title });
+    await updateCampaign(env, id, { subjectLine, previewText, title });
 
     const html = buildNewsletterHtml({ title, sections });
-    await setCampaignContent(id, html);
+    await setCampaignContent(env, id, html);
 
     return new Response(JSON.stringify({ id }), {
       status: 200,
